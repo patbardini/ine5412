@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+// #include "FCFS.cc"
 
 using namespace std;
 
@@ -17,6 +18,18 @@ public:
 	friend ostream &operator<<(ostream& os, const ProcessParams& p) {
 		os << "Creation time = " << p.creation_time << " duration = " << p.duration << " priority = " << p.priority << endl;
 		return os;
+	}
+
+	int get_creation_time() {
+		return creation_time;
+	}
+
+	int get_duration() {
+		return duration;
+	}
+
+	int get_priority() {
+		return priority;
 	}
 	
 private:	
@@ -61,8 +74,12 @@ public:
 		}
 	}
 
+	std::vector<ProcessParams*>& get_processes_params() {
+        return processes;
+    }
+
 	~File() {
-		for(int i = 0; i < processes.size() ; i++) {
+		for(long unsigned int i = 0; i < processes.size() ; i++) {
 			ProcessParams *p = processes[i];
 			delete p;
 		}
@@ -73,10 +90,10 @@ private:
 	vector<ProcessParams *> processes;
 };
 
-int main()
-{
-	File f;
-	f.read_file();
-	f.print_processes_params();
-}
+// int main()
+// {
+// 	File f;
+// 	f.read_file();
+// 	f.print_processes_params();
+// }
 

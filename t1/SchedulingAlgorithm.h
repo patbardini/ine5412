@@ -1,7 +1,7 @@
 #ifndef SCHEDULINGALGORITHM_H
 #define SCHEDULINGALGORITHM_H
-#include <iostream>
 #include <queue>
+#include "read_file.cc"
 #include "Process.h"
 
 // Class SchedulingAlgorithm:
@@ -12,6 +12,7 @@ class SchedulingAlgorithm
 public:
     virtual void addProcess(Process *process) = 0;
     virtual Process* getNextProcess() = 0;
+    virtual void addProcessesFromParams(std::vector<ProcessParams*>& processParams);
     virtual ~SchedulingAlgorithm() { }
 };
 

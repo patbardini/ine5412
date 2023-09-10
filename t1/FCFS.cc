@@ -1,7 +1,3 @@
-#include <queue>
-#include "SchedulingAlgorithm.h"
-#include "Process.h"
-
 // Class FCFS: 
 //       - This class will implement the First Come First Serve scheduling algorithm
 
@@ -26,4 +22,4 @@ public:
         queue.pop();
         return process;
     }
-}; 
+};

@@ -20,7 +20,7 @@ class Process
     // Turnaround time
     int turnaroundTime;
     // CPU context
-    CPUContext cpuContext;
+    CPUContext *cpuContext;
     // Constructor
     Process(int processID, int arrivalTime, int burstTime, int priority);
     // Destructor

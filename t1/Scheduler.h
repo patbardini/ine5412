@@ -2,7 +2,6 @@
 #define SCHEDULER_H
 
 #include "SchedulingAlgorithm.h"
-#include "Process.h"
 
 class Scheduler {
 private:
