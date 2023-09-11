@@ -1,3 +1,5 @@
+#include <iostream>
+#include "CPUContext.h"
 #include "Process.h"
 
 // Class Process: 
@@ -5,7 +7,6 @@
 //          -> Process ID, arrival time, burst time, priority, etc.
 //       - Each object created from this class will be stored into a list and will be scheduled by the Scheduler class
 
-// Constructor
 Process::Process(int processID, int arrivalTime, int burstTime, int priority) {
     this->processID = processID;
     this->arrivalTime = arrivalTime;
@@ -13,7 +14,12 @@ Process::Process(int processID, int arrivalTime, int burstTime, int priority) {
     this->priority = priority;
     this->waitingTime = 0;
     this->turnaroundTime = 0;
-    this->cpuContext = new CPUContext();
+    this->startTime = 0;
+    this->endTime = 0;
+    this->cpuContext = CPUContext();
 }
-// Destructor
-Process::~Process() { }
+
+// Destructor definition
+Process::~Process() {
+    // Any cleanup code if needed
+}
