@@ -7,6 +7,7 @@
 #include "FCFS.h"
 #include "SJF.h"
 #include "PNP.h"
+#include "RoundRobin.h"
 
 using namespace std;
 
@@ -156,4 +157,20 @@ int main() {
     // Run the scheduling simulation for PNP
     scheduler.simulate();
     scheduler.resetProcesses(processes); 
+
+    //======================================
+    // RoundRobin Scheduling Algorithm
+    //======================================
+    
+    // Setup scheduler with RoundRobin algorithm
+    RoundRobin rrAlgorithm;
+    Scheduler rrScheduler(&rrAlgorithm);
+
+    // Add processes to scheduler
+    for(auto process : processes) {
+        rrAlgorithm.addProcess(process);
+    }
+
+    // Run the scheduling simulation
+    rrAlgorithm.simulate();
 }
