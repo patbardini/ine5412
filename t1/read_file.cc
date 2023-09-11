@@ -5,6 +5,7 @@
 #include "Process.h"
 #include "Scheduler.h"
 #include "FCFS.h"
+#include "SJF.h"
 
 using namespace std;
 
@@ -96,10 +97,14 @@ int main() {
 
     // Get processes
     vector<Process *> processes = fileReader.get_processes();
+   
+    //======================================
+    // FCFS Scheduling Algorithm
+    //======================================
 
     // Setup scheduler with FCFS algorithm
     FCFS fcfsAlgorithm;
-    Scheduler scheduler(&fcfsAlgorithm);
+    Scheduler fcfsScheduler(&fcfsAlgorithm);
 
     // Add processes to scheduler
     for(auto process : processes) {
@@ -108,4 +113,21 @@ int main() {
 
     // Run the scheduling simulation
     fcfsAlgorithm.simulate();
+
+    //======================================
+    // SJF Scheduling Algorithm
+    //======================================
+    
+    // Setup scheduler with SJF algorithm
+    SJF sjfAlgorithm;
+    Scheduler sfjScheduler(&sjfAlgorithm);
+
+    // Add processes to scheduler
+    for(auto process : processes) {
+        sjfAlgorithm.addProcess(process);
+    }
+
+    // Run the scheduling simulation
+    sjfAlgorithm.simulate();
+
 }
