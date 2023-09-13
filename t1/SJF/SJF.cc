@@ -4,6 +4,7 @@ SJF::SJF() {}
 
 void SJF::addProcess(Process* process) {
     processes.push_back(process);
+    processPid[process->getProcessID()] = process;
 }
 
 void SJF::addProcesses(const std::vector<Process*>& processList) {
@@ -27,6 +28,15 @@ Process* SJF::getNextProcess() {
     return shortestProcess;
 }
 
+void SJF::updateReadyProcesses(int currentTime) {
+    for (auto &pair : processPid) {
+        Process* p = pair.second;
+        if (p->getArrivalTime() <= currentTime && p->getState() == Process::NOVO) {
+            p->setState(Process::PRONTO);
+        }
+    }
+}
+
 void SJF::simulate() {
     std::cout << "Starting SJF simulation...\n";
 
@@ -42,25 +52,32 @@ void SJF::simulate() {
 
     while (!processes.empty()) {
         Process* currentProcess = getNextProcess();
-        
-        if (currentProcess->getArrivalTime() > currentTime) {
-            currentTime = currentProcess->getArrivalTime();
-        }
+
+        currentProcess->setStartTime(currentTime);
+        currentProcess->setState(Process::EXECUTANDO);
 
         for (int j = 0; j < currentProcess->getBurstTime(); ++j) {
+            updateReadyProcesses(currentTime);
             std::cout << currentTime << "-" << (currentTime + 1) << " ";
             
-            for (Process* p : allProcesses) {  // Notice the change here
-                if (p == currentProcess) {
-                    std::cout << "## ";
-                } else {
-                    std::cout << "-- ";
+            for (Process* p : allProcesses) {
+                switch (p->getState()) {
+                    case Process::EXECUTANDO:
+                        std::cout << "## ";
+                        break;
+                    case Process::PRONTO:
+                        std::cout << "-- ";
+                        break; 
+                    default:
+                        std::cout << "   ";
+                        break;
                 }
             }
             std::cout << "\n";
             currentTime++;
         }
 
+        currentProcess->setState(Process::TERMINADO);
         contextSwitches++;
     }
     std::cout << "Total Context Switches: " << contextSwitches << std::endl;

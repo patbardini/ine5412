@@ -16,6 +16,7 @@ Process::Process(int processID, int arrivalTime, int burstTime, int priority) {
     this->turnaroundTime = 0;
     this->startTime = 0;
     this->endTime = 0;
+    this->state = NOVO;
     this->cpuContext = CPUContext();
 }
 

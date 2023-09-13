@@ -4,6 +4,7 @@
 #define FCFS_H
 
 #include <queue>
+#include <map>
 #include "Process.h"           // Assuming you have this header
 #include "SchedulingAlgorithm.h" // Assuming you have this header
 
@@ -11,6 +12,7 @@
 class FCFS : public SchedulingAlgorithm {
 private:
     std::queue<Process*> queue;
+    std::map<int, Process*> processPid; // mapeia o pid ao Process
     int contextSwitches = 0;
 
 public:
@@ -22,6 +24,7 @@ public:
     void addProcesses(const std::vector<Process*>& processes);
 
     Process* getNextProcess() override;
+    void updateReadyProcesses(int currentTime);
     void simulate() override;
 };
 

@@ -8,6 +8,7 @@ FCFS::FCFS() {}
 
 void FCFS::addProcess(Process* process) {
     queue.push(process);
+    processPid[process->getProcessID()] = process;
 }
 
 void FCFS::addProcesses(const std::vector<Process*>& processes) {
@@ -25,6 +26,15 @@ Process* FCFS::getNextProcess() {
     return process;
 }
 
+void FCFS::updateReadyProcesses(int currentTime) {
+    for (auto &pair : processPid) {
+        Process* p = pair.second;
+        if (p->getArrivalTime() <= currentTime && p->getState() == Process::NOVO) {
+            p->setState(Process::PRONTO);
+        }
+    }
+}
+
 void FCFS::simulate() {
     std::cout << "Starting FCFS simulation...\n";
 
@@ -40,15 +50,23 @@ void FCFS::simulate() {
         }
 
         currentProcess->setStartTime(currentTime);
-
+        currentProcess->setState(Process::EXECUTANDO);
+        
         for (int i = 0; i < currentProcess->getBurstTime(); ++i) {
+            updateReadyProcesses(currentTime);
             std::string timeOutput = " " + std::to_string(currentTime) + "-" + std::to_string(currentTime + 1) + " ";
-
+            
             for (int j = 1; j <= totalProcesses; j++) {
-                if (j == currentProcess->getProcessID()) {
-                    timeOutput += "## ";
-                } else {
-                    timeOutput += "-- ";
+                switch (processPid[j]->getState()) {
+                    case Process::EXECUTANDO:
+                        timeOutput += "## ";
+                        break;
+                    case Process::PRONTO:
+                        timeOutput += "-- ";
+                        break; 
+                    default:
+                        timeOutput += "   ";
+                        break;
                 }
             }
 
@@ -58,7 +76,7 @@ void FCFS::simulate() {
 
         currentProcess->setEndTime(currentTime);
         currentProcess->setTurnaroundTime(currentProcess->getEndTime() - currentProcess->getArrivalTime());
-
+        currentProcess->setState(Process::TERMINADO);
         contextSwitches++;
     }
 
