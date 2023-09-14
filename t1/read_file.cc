@@ -97,6 +97,13 @@ int main() {
 
     // Get processes
     vector<Process *> processes = fileReader.get_processes();
+
+    // Start the simulations
+    std::cout<< " \n\n========================================\n"
+             << "||                                      ||\n"
+             << "||  Simulação de escalonamento de CPU   ||\n"
+             << "||                                      ||\n"
+            << "========================================\n" << std::endl;
    
     //======================================
     // FCFS Scheduling Algorithm
@@ -104,30 +111,30 @@ int main() {
 
     // Setup scheduler with FCFS algorithm
     FCFS fcfsAlgorithm;
-    Scheduler fcfsScheduler(&fcfsAlgorithm);
+    Scheduler scheduler(&fcfsAlgorithm);
 
     // Add processes to scheduler
     for(auto process : processes) {
-        fcfsAlgorithm.addProcess(process);
+        scheduler.addProcess(process);
     }
 
-    // Run the scheduling simulation
-    fcfsAlgorithm.simulate();
+    // Run the scheduling simulation for FCFS
+    scheduler.simulate();
+    scheduler.resetProcesses(processes);
 
     //======================================
     // SJF Scheduling Algorithm
     //======================================
-    
+
     // Setup scheduler with SJF algorithm
     SJF sjfAlgorithm;
-    Scheduler sfjScheduler(&sjfAlgorithm);
+    scheduler.setAlgorithm(&sjfAlgorithm); // This will also reset the processes
 
     // Add processes to scheduler
     for(auto process : processes) {
-        sjfAlgorithm.addProcess(process);
+        scheduler.addProcess(process);
     }
 
-    // Run the scheduling simulation
-    sjfAlgorithm.simulate();
-
+    // Run the scheduling simulation for SJF
+    scheduler.simulate();
 }

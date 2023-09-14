@@ -14,9 +14,17 @@ private:
     int turnaroundTime;
     int startTime;
     int endTime;
+    int state;
     CPUContext cpuContext;
 
 public:
+    enum State {
+        NEW, 
+        READY, 
+        EXECUTING, 
+        FINISHED 
+    };
+
     // Constructor
     Process(int processID, int arrivalTime, int burstTime, int priority);
 
@@ -32,6 +40,7 @@ public:
     int getTurnaroundTime() const { return turnaroundTime; }
     int getStartTime() const { return startTime; }
     int getEndTime() const { return endTime; }
+    int getState() const { return state; }
     
     void setWaitingTime(int wt) { waitingTime = wt; }
     void setTurnaroundTime(int tt) { turnaroundTime = tt; }
@@ -41,6 +50,7 @@ public:
     void setProcessID(int pid) { processID = pid; }
     void setStartTime(int st) { startTime = st; }
     void setEndTime(int et) { endTime = et; }
+    void setState(int s) { state = s; }
 
 };
 
