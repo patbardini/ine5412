@@ -46,9 +46,9 @@ void RoundRobin::simulate() {
         currentProcess->setStartTime(currentTime);
         currentProcess->setState(Process::EXECUTING);
 
-        int burstTime = currentProcess->getBurstTime();
+        int remainingTime = currentProcess->getRemainingTime();
 
-        for (int i = 0; i < std::min(timeQuantum, burstTime); ++i) {
+        for (int i = 0; i < std::min(timeQuantum, remainingTime); ++i) {
             updateReadyProcesses(currentTime);
             std::string timeOutput = " " + std::to_string(currentTime) + "-" + std::to_string(currentTime + 1) + " ";
 
@@ -70,9 +70,9 @@ void RoundRobin::simulate() {
             currentTime++;
         }
 
-        currentProcess->setBurstTime(burstTime - timeQuantum);
+        currentProcess->setRemainingTime(remainingTime - timeQuantum);
         
-        if (currentProcess->getBurstTime() > 0) {
+        if (currentProcess->getRemainingTime() > 0) {
             queue.push(currentProcess);  // Readiciona à fila se o processo ainda precisa de mais tempo
             currentProcess->setState(Process::READY);
         } else {
