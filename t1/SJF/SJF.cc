@@ -1,4 +1,6 @@
 #include "SJF.h"
+#include <algorithm>
+#include <iostream>
 
 SJF::SJF() {}
 
@@ -17,7 +19,7 @@ Process* SJF::getNextProcess() {
     if (processes.empty()) {
         return nullptr;
     }
-    
+
     // Sorting the processes based on burst time
     std::sort(processes.begin(), processes.end(), [](Process* a, Process* b) {
         return a->getBurstTime() < b->getBurstTime();
@@ -31,8 +33,9 @@ Process* SJF::getNextProcess() {
 void SJF::updateReadyProcesses(int currentTime) {
     for (auto &pair : processPid) {
         Process* p = pair.second;
-        if (p->getArrivalTime() <= currentTime && p->getState() == Process::NOVO) {
-            p->setState(Process::PRONTO);
+        // If the process has arrived and is not executing, set it to ready
+        if (p->getArrivalTime() <= currentTime && p->getState() == Process::NEW) {
+            p->setState(Process::READY);
         }
     }
 }
@@ -43,7 +46,7 @@ void SJF::simulate() {
     int currentTime = 0;
     std::cout << "tempo ";
 
-    std::vector<Process*> allProcesses = processes;  // Make a copy for printing purposes
+    std::vector<Process*> allProcesses = processes;  
 
     for (size_t i = 1; i <= allProcesses.size(); i++) {
         std::cout << "P" << i << " ";
@@ -54,7 +57,7 @@ void SJF::simulate() {
         Process* currentProcess = getNextProcess();
 
         currentProcess->setStartTime(currentTime);
-        currentProcess->setState(Process::EXECUTANDO);
+        currentProcess->setState(Process::EXECUTING);
 
         for (int j = 0; j < currentProcess->getBurstTime(); ++j) {
             updateReadyProcesses(currentTime);
@@ -62,10 +65,10 @@ void SJF::simulate() {
             
             for (Process* p : allProcesses) {
                 switch (p->getState()) {
-                    case Process::EXECUTANDO:
+                    case Process::EXECUTING:
                         std::cout << "## ";
                         break;
-                    case Process::PRONTO:
+                    case Process::READY:
                         std::cout << "-- ";
                         break; 
                     default:
@@ -74,12 +77,12 @@ void SJF::simulate() {
                 }
             }
             std::cout << "\n";
+            currentProcess->setEndTime(currentTime);
+        currentProcess->setTurnaroundTime(currentProcess->getEndTime() - currentProcess->getArrivalTime());
             currentTime++;
         }
 
-        currentProcess->setState(Process::TERMINADO);
-        contextSwitches++;
+        currentProcess->setState(Process::FINISHED);
     }
-    std::cout << "Total Context Switches: " << contextSwitches << std::endl;
     std::cout << "SJF simulation finished.\n";
 }

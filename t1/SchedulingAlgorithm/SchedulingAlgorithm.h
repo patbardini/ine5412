@@ -27,7 +27,9 @@ public:
     // Simulate the scheduling algorithm
     virtual void simulate() = 0;
 
-    // Other potential methods like removeProcess, updateProcess, etc., can be added here
+    // Update the ready processes
+    virtual void updateReadyProcesses(int currentTime) = 0;
+    
 };
 
 #endif // SCHEDULINGALGORITHM_H

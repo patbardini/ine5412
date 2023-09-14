@@ -29,9 +29,10 @@ Process* FCFS::getNextProcess() {
 void FCFS::updateReadyProcesses(int currentTime) {
     for (auto &pair : processPid) {
         Process* p = pair.second;
-        if (p->getArrivalTime() <= currentTime && p->getState() == Process::NOVO) {
-            p->setState(Process::PRONTO);
-        }
+        // If the process has arrived and is not executing, set it to ready
+        if (p->getArrivalTime() <= currentTime && p->getState() == Process::NEW) {
+            p->setState(Process::READY);
+        } 
     }
 }
 
@@ -50,7 +51,7 @@ void FCFS::simulate() {
         }
 
         currentProcess->setStartTime(currentTime);
-        currentProcess->setState(Process::EXECUTANDO);
+        currentProcess->setState(Process::EXECUTING);
         
         for (int i = 0; i < currentProcess->getBurstTime(); ++i) {
             updateReadyProcesses(currentTime);
@@ -58,10 +59,10 @@ void FCFS::simulate() {
             
             for (int j = 1; j <= totalProcesses; j++) {
                 switch (processPid[j]->getState()) {
-                    case Process::EXECUTANDO:
+                    case Process::EXECUTING:
                         timeOutput += "## ";
                         break;
-                    case Process::PRONTO:
+                    case Process::READY:
                         timeOutput += "-- ";
                         break; 
                     default:
@@ -76,8 +77,7 @@ void FCFS::simulate() {
 
         currentProcess->setEndTime(currentTime);
         currentProcess->setTurnaroundTime(currentProcess->getEndTime() - currentProcess->getArrivalTime());
-        currentProcess->setState(Process::TERMINADO);
-        contextSwitches++;
+        currentProcess->setState(Process::FINISHED);
     }
 
     // Results
@@ -91,6 +91,5 @@ void FCFS::simulate() {
         std::cout << s << "\n";
     }
 
-    std::cout << "Total Context Switches: " << contextSwitches << std::endl;
     std::cout << "FCFS simulation finished.\n";
 }

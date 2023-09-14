@@ -1,3 +1,5 @@
+// Scheduler.cc
+
 #include "Scheduler.h"
 
 Scheduler::Scheduler(SchedulingAlgorithm* alg) : algorithm(alg) {}
@@ -18,6 +20,13 @@ void Scheduler::setAlgorithm(SchedulingAlgorithm* alg) {
     algorithm = alg;
 }
 
+void Scheduler::resetProcesses(const std::vector<Process*>& processes) {
+    for (Process* p : processes) {
+        p->setState(Process::NEW);
+        // Reset other properties if necessary
+    }
+}
+
 Scheduler::~Scheduler() {
-    // cleanup if necessary
+    // Cleanup if necessary
 }

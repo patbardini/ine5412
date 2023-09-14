@@ -13,3 +13,4 @@ CPUContext::CPUContext() : SP(0), PC(0), ST(0) {
 // Destructor (currently empty as we're not dynamically allocating anything)
 CPUContext::~CPUContext() {
 }
+

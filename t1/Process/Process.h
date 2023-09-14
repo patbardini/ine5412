@@ -19,10 +19,10 @@ private:
 
 public:
     enum State {
-        NOVO, 
-        PRONTO, 
-        EXECUTANDO, 
-        TERMINADO 
+        NEW, 
+        READY, 
+        EXECUTING, 
+        FINISHED 
     };
 
     // Constructor
