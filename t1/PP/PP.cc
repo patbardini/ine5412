@@ -51,7 +51,7 @@ void PP::updateReadyProcesses(int currentTime) {
     }
 }
 
-Process* PP::checkForBiggerPriority(Process* currentProcess) {
+Process* PP::getHighestPriorityProcess(Process* currentProcess) {
     Process* highestPriorityProcess = currentProcess;
     for (Process* p : processes) {
         if (p->getState() == Process::READY && p->getPriority() > currentProcess->getPriority()) {
@@ -117,7 +117,7 @@ void PP::simulate() {
 
         for (int j = 0; j < currentProcess->getBurstTime(); ++j) {
             updateReadyProcesses(currentTime);
-            highestPriorityProcess = checkForBiggerPriority(currentProcess);
+            highestPriorityProcess = getHighestPriorityProcess(currentProcess);
             if (highestPriorityProcess != currentProcess || currentProcess->getRemainingTime() <= 0) {
                 break;
             }

@@ -15,7 +15,7 @@ public:
 
     void updateReadyProcesses(int currentTime) override;
 
-    Process* checkForBiggerPriority(Process* currentProcess);
+    Process* getHighestPriorityProcess(Process* currentProcess);
 
     void simulate() override;
 
