@@ -2,13 +2,13 @@
 CC = g++
 
 # Compiler flags
-CFLAGS = -Wall -std=c++11 -IReadFile -IScheduler -IProcess -ISchedulingAlgorithm -ICPUContext -IFCFS -ISJF -IPNP
+CFLAGS = -Wall -std=c++11 -IReadFile -IScheduler -IProcess -ISchedulingAlgorithm -ICPUContext -IFCFS -ISJF -IPNP -IRoundRobin
 
 # Target executable name
 TARGET = read_file
 
 # .cc files 
-SRC_FILES = Scheduler/Scheduler.cc Process/Process.cc CPUContext/CPUContext.cc FCFS/FCFS.cc SJF/SJF.cc PNP/PNP.cc read_file.cc
+SRC_FILES = Scheduler/Scheduler.cc Process/Process.cc CPUContext/CPUContext.cc FCFS/FCFS.cc SJF/SJF.cc PNP/PNP.cc RoundRobin/RoundRobin.cc read_file.cc
 OBJ_FILES = $(SRC_FILES:.cc=.o)
 
 all: $(TARGET)
