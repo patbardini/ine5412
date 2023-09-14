@@ -51,6 +51,7 @@ void PNP::updateReadyProcesses(int currentTime) {
         }
     }
 }
+
 void PNP::simulate() {
     std::cout << "-> Início algoritmo Priority Non-Preemptive...\n\n";
 
@@ -65,46 +66,35 @@ void PNP::simulate() {
     }
     std::cout << "\n";
 
+    // Helper function to print processes' states
+    auto printProcessesState = [&]() {
+        std::cout << " " << currentTime << "-" << (currentTime + 1) << "  ";
+        for (Process* p : allProcesses) {
+            switch (p->getState()) {
+                case Process::EXECUTING:
+                    std::cout << "## ";
+                    break;
+                case Process::READY:
+                    std::cout << "-- ";
+                    break;
+                default:
+                    std::cout << "   ";
+                    break;
+            }
+        }
+        std::cout << "\n";
+    };
+
     while (!processes.empty()) {
         updateReadyProcesses(currentTime);
         Process* currentProcess = getNextProcess();
-        if (currentProcess == nullptr) {
-            std::cout << " " << currentTime << "-" << (currentTime + 1) << "  ";
-            
-            for (Process* p : allProcesses) {
-                switch (p->getState()) {
-                    case Process::EXECUTING:
-                        std::cout << "## ";
-                        break;
-                    case Process::READY:
-                        std::cout << "-- ";
-                        break; 
-                    default:
-                        std::cout << "   ";
-                        break;
-                }
-            }
-            std::cout << "\n";
-            currentTime++;
-        }
 
-        while (currentProcess->getArrivalTime() > currentTime) {
-            std::cout << " " << currentTime << "-" << (currentTime + 1) << "  ";
-            for (Process* p : allProcesses) {
-                switch (p->getState()) {
-                    case Process::EXECUTING:
-                        std::cout << "## ";
-                        break;
-                    case Process::READY:
-                        std::cout << "-- ";
-                        break; 
-                    default:
-                        std::cout << "   ";
-                        break;
-                }
-            }
-            std::cout << "\n";
+        while (!currentProcess || currentProcess->getArrivalTime() > currentTime) {
+            printProcessesState();
             currentTime++;
+            if (!currentProcess) {
+                currentProcess = getNextProcess();
+            }
         }
 
         currentProcess->setStartTime(currentTime);
@@ -112,23 +102,8 @@ void PNP::simulate() {
 
         for (int j = 0; j < currentProcess->getBurstTime(); ++j) {
             updateReadyProcesses(currentTime);
-            std::cout << " " << currentTime << "-" << (currentTime + 1) << "  ";
+            printProcessesState();
             
-            for (Process* p : allProcesses) {
-                switch (p->getState()) {
-                    case Process::EXECUTING:
-                        std::cout << "## ";
-                        break;
-                    case Process::READY:
-                        std::cout << "-- ";
-                        break; 
-                    default:
-                        std::cout << "   ";
-                        break;
-                }
-            }
-
-            std::cout << "\n";
             currentTime++;
             currentProcess->setEndTime(currentTime);
             currentProcess->setTurnaroundTime(currentProcess->getEndTime() - currentProcess->getArrivalTime());
@@ -136,6 +111,7 @@ void PNP::simulate() {
 
         currentProcess->setState(Process::FINISHED);
     }
+
     std::cout << "\nPriority Non-Preemptive fim.\n";
     std::cout << "========================================\n";
 }
