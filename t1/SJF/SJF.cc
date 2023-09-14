@@ -20,13 +20,29 @@ Process* SJF::getNextProcess() {
         return nullptr;
     }
 
+    std::vector<Process*> readyProcesses;
+    for (Process* p : processes) {
+        if (p->getState() == Process::READY) {
+            readyProcesses.push_back(p);
+        }
+    }
+
+    if (readyProcesses.empty()) {
+        return nullptr;
+    }
+
     // Sorting the processes based on burst time
-    std::sort(processes.begin(), processes.end(), [](Process* a, Process* b) {
+    std::sort(readyProcesses.begin(), readyProcesses.end(), [](Process* a, Process* b) {
         return a->getBurstTime() < b->getBurstTime();
     });
 
-    Process* shortestProcess = processes.front();
-    processes.erase(processes.begin());
+    Process* shortestProcess = readyProcesses.front();
+
+    auto it = std::find(processes.begin(), processes.end(), shortestProcess);
+    if (it != processes.end()) {
+        processes.erase(it);
+    }
+
     return shortestProcess;
 }
 
@@ -45,7 +61,6 @@ void SJF::simulate() {
 
     int currentTime = 0;
     std::cout << "tempo ";
-
     std::vector<Process*> allProcesses = processes;  
 
     for (size_t i = 1; i <= allProcesses.size(); i++) {
@@ -54,7 +69,13 @@ void SJF::simulate() {
     std::cout << "\n";
 
     while (!processes.empty()) {
+        updateReadyProcesses(currentTime);
         Process* currentProcess = getNextProcess();
+        
+        if (currentProcess == nullptr) {
+            currentTime++;
+            continue;  // Skip to the next iteration
+        }
 
         currentProcess->setStartTime(currentTime);
         currentProcess->setState(Process::EXECUTING);
@@ -79,7 +100,7 @@ void SJF::simulate() {
 
             std::cout << "\n";
             currentProcess->setEndTime(currentTime);
-        currentProcess->setTurnaroundTime(currentProcess->getEndTime() - currentProcess->getArrivalTime());
+            currentProcess->setTurnaroundTime(currentProcess->getEndTime() - currentProcess->getArrivalTime());
             currentTime++;
         }
 

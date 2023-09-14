@@ -52,6 +52,9 @@ public:
     void setEndTime(int et) { endTime = et; }
     void setState(int s) { state = s; }
 
+    void saveContext(const CPUContext& currentContext);
+    CPUContext getContext() const;
+
 };
 
 #endif /* PROCESS_H */

@@ -18,11 +18,12 @@ public:
     FCFS();
 
     void addProcess(Process* process) override;
-    // Method to add multiple processes
     void addProcesses(const std::vector<Process*>& processes) override;
+    void contextSwitch(Process* fromProcess, Process* toProcess) override;
     Process* getNextProcess() override;
     void updateReadyProcesses(int currentTime) override;
     void simulate() override;
+    
 };
 
 #endif // FCFS_H

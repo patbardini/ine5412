@@ -17,6 +17,11 @@ void FCFS::addProcesses(const std::vector<Process*>& processes) {
     }
 }
 
+void FCFS::contextSwitch(Process* fromProcess, Process* toProcess) {
+    SchedulingAlgorithm::contextSwitch(fromProcess, toProcess);
+}
+
+
 Process* FCFS::getNextProcess() {
     if (queue.empty()) {
         return nullptr;
@@ -42,12 +47,18 @@ void FCFS::simulate() {
     int currentTime = 0;
     int totalProcesses = queue.size();  // get the total number of processes
     std::vector<std::string> output;    // to store the output for each time interval
+    Process* prevProcess = nullptr;
 
     while (!queue.empty()) {
         Process* currentProcess = getNextProcess();
 
         if (currentProcess->getArrivalTime() > currentTime) {
             currentTime = currentProcess->getArrivalTime();
+        }
+
+        // Before starting a process, restore its context
+        if (prevProcess != nullptr) {
+            contextSwitch(prevProcess, currentProcess);
         }
 
         currentProcess->setStartTime(currentTime);
@@ -78,6 +89,9 @@ void FCFS::simulate() {
         currentProcess->setEndTime(currentTime);
         currentProcess->setTurnaroundTime(currentProcess->getEndTime() - currentProcess->getArrivalTime());
         currentProcess->setState(Process::FINISHED);
+
+        contextSwitch(currentProcess, nullptr);
+        prevProcess = currentProcess;
     }
 
     // Results

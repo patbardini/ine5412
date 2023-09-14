@@ -29,8 +29,22 @@ public:
 
     // Update the ready processes
     virtual void updateReadyProcesses(int currentTime) = 0;
-    
+
+    // The context switch function
+    virtual void contextSwitch(Process* fromProcess, Process* toProcess) {
+        CPUContext currentCPUContext;
+
+        if (fromProcess) {
+            // Save the current context of the CPU to the fromProcess.
+            fromProcess->saveContext(currentCPUContext);
+        }
+
+        if (toProcess) {
+            // Restore the saved context from toProcess to the CPU.
+            currentCPUContext = toProcess->getContext();
+        }
+    }
+
 };
 
 #endif // SCHEDULINGALGORITHM_H
-

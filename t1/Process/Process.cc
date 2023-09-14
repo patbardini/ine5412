@@ -2,26 +2,24 @@
 #include "CPUContext.h"
 #include "Process.h"
 
-// Class Process: 
-//       - This class will hold the information about a particular process
-//          -> Process ID, arrival time, burst time, priority, etc.
-//       - Each object created from this class will be stored into a list and will be scheduled by the Scheduler class
+Process::Process(int processID, int arrivalTime, int burstTime, int priority) 
+    : processID(processID),
+      arrivalTime(arrivalTime),
+      burstTime(burstTime),
+      priority(priority),
+      waitingTime(0),
+      turnaroundTime(0),
+      startTime(0),
+      endTime(0),
+      state(NEW),
+      cpuContext() {}  // This calls the default constructor of CPUContext
 
-Process::Process(int processID, int arrivalTime, int burstTime, int priority) {
-    this->processID = processID;
-    this->arrivalTime = arrivalTime;
-    this->burstTime = burstTime;
-    this->priority = priority;
-    this->waitingTime = 0;
-    this->turnaroundTime = 0;
-    this->startTime = 0;
-    this->endTime = 0;
-    this->state = NEW;
-    this->cpuContext = CPUContext();
+Process::~Process() {}
+
+void Process::saveContext(const CPUContext& currentContext) {
+    cpuContext = currentContext;
 }
 
-// Destructor definition
-Process::~Process() {
-    
+CPUContext Process::getContext() const {
+    return cpuContext;
 }
-
