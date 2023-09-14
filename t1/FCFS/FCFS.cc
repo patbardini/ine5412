@@ -46,10 +46,6 @@ void FCFS::simulate() {
     while (!queue.empty()) {
         Process* currentProcess = getNextProcess();
 
-        if (currentProcess->getArrivalTime() > currentTime) {
-            currentTime = currentProcess->getArrivalTime();
-        }
-
         currentProcess->setStartTime(currentTime);
         currentProcess->setState(Process::EXECUTING);
         

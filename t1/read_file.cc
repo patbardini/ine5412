@@ -101,11 +101,11 @@ int main() {
     vector<Process *> processes = fileReader.get_processes();
 
     // Start the simulations
-    std::cout<< " \n\n========================================\n"
+    std::cout<< " \n\n  ======================================\n"
              << "||                                      ||\n"
              << "||  Simulação de escalonamento de CPU   ||\n"
              << "||                                      ||\n"
-            << "========================================\n" << std::endl;
+            << "  ======================================\n" << std::endl;
    
     //======================================
     // FCFS Scheduling Algorithm
@@ -164,13 +164,14 @@ int main() {
     
     // Setup scheduler with RoundRobin algorithm
     RoundRobin rrAlgorithm;
-    Scheduler rrScheduler(&rrAlgorithm);
+    scheduler.setAlgorithm(&rrAlgorithm);
 
     // Add processes to scheduler
     for(auto process : processes) {
-        rrAlgorithm.addProcess(process);
+        scheduler.addProcess(process);
     }
 
     // Run the scheduling simulation
-    rrAlgorithm.simulate();
+    scheduler.simulate();
+    scheduler.resetProcesses(processes);
 }

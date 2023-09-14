@@ -5,6 +5,7 @@ RoundRobin::RoundRobin() {}
 
 void RoundRobin::addProcess(Process* process) {
     queue.push(process);
+    processPid[process->getProcessID()] = process;
 }
 
 void RoundRobin::addProcesses(const std::vector<Process*>& processes) {
@@ -22,8 +23,18 @@ Process* RoundRobin::getNextProcess() {
     return process;
 }
 
+void RoundRobin::updateReadyProcesses(int currentTime) {
+    for (auto &pair : processPid) {
+        Process* p = pair.second;
+        // If the process has arrived and is not executing, set it to ready
+        if (p->getArrivalTime() <= currentTime && p->getState() == Process::NEW) {
+            p->setState(Process::READY);
+        } 
+    }
+}
+
 void RoundRobin::simulate() {
-    std::cout << "Starting Round Robin simulation...\n";
+    std::cout << "-> Início algoritmo Round Robin...\n\n";
 
     int currentTime = 0;
     int totalProcesses = queue.size();
@@ -32,20 +43,26 @@ void RoundRobin::simulate() {
     while (!queue.empty()) {
         Process* currentProcess = getNextProcess();
 
-        if (currentProcess->getArrivalTime() > currentTime) {
-            currentTime = currentProcess->getArrivalTime();
-        }
+        currentProcess->setStartTime(currentTime);
+        currentProcess->setState(Process::EXECUTING);
 
         int burstTime = currentProcess->getBurstTime();
 
         for (int i = 0; i < std::min(timeQuantum, burstTime); ++i) {
+            updateReadyProcesses(currentTime);
             std::string timeOutput = " " + std::to_string(currentTime) + "-" + std::to_string(currentTime + 1) + " ";
 
             for (int j = 1; j <= totalProcesses; j++) {
-                if (j == currentProcess->getProcessID()) {
-                    timeOutput += "## ";
-                } else {
-                    timeOutput += "-- ";
+                switch (processPid[j]->getState()) {
+                    case Process::EXECUTING:
+                        timeOutput += "## ";
+                        break;
+                    case Process::READY:
+                        timeOutput += "-- ";
+                        break; 
+                    default:
+                        timeOutput += "   ";
+                        break;
                 }
             }
 
@@ -57,9 +74,11 @@ void RoundRobin::simulate() {
         
         if (currentProcess->getBurstTime() > 0) {
             queue.push(currentProcess);  // Readiciona à fila se o processo ainda precisa de mais tempo
+            currentProcess->setState(Process::READY);
         } else {
             currentProcess->setEndTime(currentTime);
             currentProcess->setTurnaroundTime(currentTime - currentProcess->getArrivalTime());
+            currentProcess->setState(Process::FINISHED);
         }
 
         contextSwitches++;
@@ -75,6 +94,6 @@ void RoundRobin::simulate() {
         std::cout << s << "\n";
     }
 
-    std::cout << "Total Context Switches: " << contextSwitches << std::endl;
-    std::cout << "Round Robin simulation finished.\n";
+    std::cout << "\nRound Robin fim.\n";
+    std::cout << "========================================\n";
 }
