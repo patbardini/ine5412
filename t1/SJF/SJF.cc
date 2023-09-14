@@ -33,7 +33,7 @@ Process* SJF::getNextProcess() {
 void SJF::updateReadyProcesses(int currentTime) {
     for (auto &pair : processPid) {
         Process* p = pair.second;
-        // If the process has arrived and is not executing, set it to ready
+        // If the process has arrived and is set to NEW, set it to READY
         if (p->getArrivalTime() <= currentTime && p->getState() == Process::NEW) {
             p->setState(Process::READY);
         }
