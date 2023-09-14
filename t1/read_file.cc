@@ -6,6 +6,7 @@
 #include "Scheduler.h"
 #include "FCFS.h"
 #include "SJF.h"
+#include "PNP.h"
 
 using namespace std;
 
@@ -137,4 +138,22 @@ int main() {
 
     // Run the scheduling simulation for SJF
     scheduler.simulate();
+    scheduler.resetProcesses(processes); 
+
+    //======================================
+    // PNP Scheduling Algorithm
+    //======================================
+ 
+    // Setup scheduler with PNP algorithm
+    PNP pnpAlgorithm;
+    scheduler.setAlgorithm(&pnpAlgorithm);
+
+    // Add processes to scheduler
+    for(auto process : processes) {
+        scheduler.addProcess(process);
+    }
+
+    // Run the scheduling simulation for PNP
+    scheduler.simulate();
+    scheduler.resetProcesses(processes); 
 }
