@@ -97,6 +97,13 @@ int main() {
 
     // Get processes
     vector<Process *> processes = fileReader.get_processes();
+
+    // Start the simulations
+    std::cout<< " \n\n========================================\n"
+             << "||                                      ||\n"
+             << "||  Simulação de escalonamento de CPU   ||\n"
+             << "||                                      ||\n"
+            << "========================================\n" << std::endl;
    
     //======================================
     // FCFS Scheduling Algorithm

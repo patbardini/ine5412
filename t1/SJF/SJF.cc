@@ -41,7 +41,7 @@ void SJF::updateReadyProcesses(int currentTime) {
 }
 
 void SJF::simulate() {
-    std::cout << "Starting SJF simulation...\n";
+    std::cout << "-> Início algoritmo Shortest Job First...\n\n";
 
     int currentTime = 0;
     std::cout << "tempo ";
@@ -61,7 +61,7 @@ void SJF::simulate() {
 
         for (int j = 0; j < currentProcess->getBurstTime(); ++j) {
             updateReadyProcesses(currentTime);
-            std::cout << currentTime << "-" << (currentTime + 1) << " ";
+            std::cout << " " << currentTime << "-" << (currentTime + 1) << "  ";
             
             for (Process* p : allProcesses) {
                 switch (p->getState()) {
@@ -76,6 +76,7 @@ void SJF::simulate() {
                         break;
                 }
             }
+
             std::cout << "\n";
             currentProcess->setEndTime(currentTime);
         currentProcess->setTurnaroundTime(currentProcess->getEndTime() - currentProcess->getArrivalTime());
@@ -84,5 +85,6 @@ void SJF::simulate() {
 
         currentProcess->setState(Process::FINISHED);
     }
-    std::cout << "SJF simulation finished.\n";
+    std::cout << "\nShortest Job First fim.\n";
+    std::cout << "========================================\n";
 }

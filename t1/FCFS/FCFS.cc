@@ -37,7 +37,7 @@ void FCFS::updateReadyProcesses(int currentTime) {
 }
 
 void FCFS::simulate() {
-    std::cout << "Starting FCFS simulation...\n";
+    std::cout << "-> Início algoritmo First Come First Served...\n\n";
 
     int currentTime = 0;
     int totalProcesses = queue.size();  // get the total number of processes
@@ -55,7 +55,7 @@ void FCFS::simulate() {
         
         for (int i = 0; i < currentProcess->getBurstTime(); ++i) {
             updateReadyProcesses(currentTime);
-            std::string timeOutput = " " + std::to_string(currentTime) + "-" + std::to_string(currentTime + 1) + " ";
+            std::string timeOutput = " " + std::to_string(currentTime) + "-" + std::to_string(currentTime + 1) + "  ";
             
             for (int j = 1; j <= totalProcesses; j++) {
                 switch (processPid[j]->getState()) {
@@ -91,5 +91,6 @@ void FCFS::simulate() {
         std::cout << s << "\n";
     }
 
-    std::cout << "FCFS simulation finished.\n";
+    std::cout << "\nFirst Come First Served fim.\n";
+    std::cout << "========================================\n";
 }
