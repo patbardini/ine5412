@@ -11,6 +11,7 @@ Process::Process(int processID, int arrivalTime, int burstTime, int priority)
       turnaroundTime(0),
       startTime(0),
       endTime(0),
+      remainingTime(burstTime),
       state(NEW),
       cpuContext() {}  // This calls the default constructor of CPUContext
 

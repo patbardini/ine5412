@@ -7,6 +7,7 @@
 #include "FCFS.h"
 #include "SJF.h"
 #include "PNP.h"
+#include "PP.h"
 #include "RoundRobin.h"
 
 using namespace std;
@@ -155,6 +156,23 @@ int main() {
     }
 
     // Run the scheduling simulation for PNP
+    scheduler.simulate();
+    scheduler.resetProcesses(processes);
+
+    //======================================
+    // PP Scheduling Algorithm
+    //======================================
+ 
+    // Setup scheduler with PP algorithm
+    PP ppAlgorithm;
+    scheduler.setAlgorithm(&ppAlgorithm);
+
+    // Add processes to scheduler
+    for(auto process : processes) {
+        scheduler.addProcess(process);
+    }
+
+    // Run the scheduling simulation for PP
     scheduler.simulate();
     scheduler.resetProcesses(processes); 
 

@@ -14,6 +14,7 @@ private:
     int turnaroundTime;
     int startTime;
     int endTime;
+    int remainingTime;
     int state;
     CPUContext cpuContext;
 
@@ -40,6 +41,7 @@ public:
     int getTurnaroundTime() const { return turnaroundTime; }
     int getStartTime() const { return startTime; }
     int getEndTime() const { return endTime; }
+    int getRemainingTime() const { return remainingTime; }
     int getState() const { return state; }
     
     void setWaitingTime(int wt) { waitingTime = wt; }
@@ -50,6 +52,7 @@ public:
     void setProcessID(int pid) { processID = pid; }
     void setStartTime(int st) { startTime = st; }
     void setEndTime(int et) { endTime = et; }
+    void setRemainingTime(int rt) { remainingTime = rt; }
     void setState(int s) { state = s; }
 
     void saveContext(const CPUContext& currentContext);
