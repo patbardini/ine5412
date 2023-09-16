@@ -132,6 +132,7 @@ void RoundRobin::simulate() {
         }
         prevProcess = currentProcess;
     }
+    }
 
     std::cout << "\n";
     std::cout << "----------------------------------------\n";

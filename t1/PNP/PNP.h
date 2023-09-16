@@ -12,17 +12,12 @@ class PNP : public SchedulingAlgorithm {
 public:
     PNP();
 
-    void addProcess(Process* process) override;
-    Process* getNextProcess() override;
-    void updateReadyProcesses(int currentTime) override;
-    float calculateAverageTurnaroundTime();
-    float calculateAverageWaitingTime();
-    void printAverageTime(const std::string& title, int (Process::*getter)() const, std::function<float()> calculateAverage);
     void simulate() override;
+    Process* sortReadyProcesses(std::vector<Process*> readyProcesses) override;
 
 private:
-    std::vector<Process*> processes;
-    std::map<int, Process*> processPid;  // to quickly access processes by their PID
+    std::string algorithmName = "Priority Non-Preemptive";
+
 };
 
 #endif // PNP_H

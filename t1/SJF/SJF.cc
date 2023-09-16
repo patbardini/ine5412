@@ -4,91 +4,26 @@
 
 SJF::SJF() {}
 
-void SJF::addProcess(Process* process) {
-    processes.push_back(process);
-    processPid[process->getProcessID()] = process;
-}
+Process* SJF::sortReadyProcesses(std::vector<Process*> readyProcesses) {
 
-
-Process* SJF::getNextProcess() {
-    if (processes.empty()) {
-        return nullptr;
-    }
-
-    std::vector<Process*> readyProcesses;
-    for (Process* p : processes) {
-        if (p->getState() == Process::READY) {
-            readyProcesses.push_back(p);
-        }
-    }
-
-    if (readyProcesses.empty()) {
-        return nullptr;
-    }
-
-    // Sorting the processes based on burst time
     std::sort(readyProcesses.begin(), readyProcesses.end(), [](Process* a, Process* b) {
         return a->getBurstTime() < b->getBurstTime();
     });
 
     Process* shortestProcess = readyProcesses.front();
 
-    auto it = std::find(processes.begin(), processes.end(), shortestProcess);
-    if (it != processes.end()) {
-        processes.erase(it);
-    }
-
     return shortestProcess;
 }
 
-void SJF::updateReadyProcesses(int currentTime) {
-    for (auto &pair : processPid) {
-        Process* p = pair.second;
-        // If the process has arrived and is set to NEW, set it to READY
-        if (p->getArrivalTime() <= currentTime && p->getState() == Process::NEW) {
-            p->setState(Process::READY);
-        }
-    }
-}
-
-float SJF::calculateAverageTurnaroundTime() {
-    float average = 0;
-    for (auto &pair : processPid) {
-        int turnaroundTime = pair.second->getTurnaroundTime();
-        average += turnaroundTime;
-    }
-    average /= processPid.size();
-    return average;
-}
-
-float SJF::calculateAverageWaitingTime() {
-    float average = 0;
-    for (auto &pair : processPid) {
-        int waitingTime = pair.second->getWaitingTime();
-        average += waitingTime;
-    }
-    average /= processPid.size();
-    return average;
-}
-
-void SJF::printAverageTime(const std::string& title, int (Process::*getter)() const, std::function<float()> calculateAverage) {
-    std::cout << title << "\n";
-    for (const auto& pair : processPid) {
-        Process* p = pair.second;
-        std::cout << "P" << pair.first << " = " << (p->*getter)() << "\n";
-    }
-    std::cout << "Média = " << calculateAverage() << "\n";
-    std::cout << "\n";
-}
 
 void SJF::simulate() {
     std::cout << "-> Início algoritmo Shortest Job First...\n\n";
 
     int currentTime = 0;
     Process* prevProcess = nullptr;
-    std::cout << "tempo ";
     std::vector<Process*> allProcesses = processes;  
 
+    std::cout << "tempo ";
     for (size_t i = 1; i <= allProcesses.size(); i++) {
         std::cout << "P" << i << " ";
     }
@@ -147,12 +82,5 @@ void SJF::simulate() {
         prevProcess = currentProcess;
     }
 
-    std::cout << "\n";
-    std::cout << "----------------------------------------\n";
-
-    printAverageTime("Tempo de Turnaround para cada processo:", &Process::getTurnaroundTime, [&]() { return calculateAverageTurnaroundTime(); });
-    printAverageTime("Tempo de espera para cada processo:", &Process::getWaitingTime, [&]() { return calculateAverageWaitingTime(); });
-
-    const char * algorithmName = "Shortest Job First";
     printResults(scheduler->getContextSwitches(), algorithmName);
 }

@@ -4,43 +4,7 @@
 
 PP::PP() {}
 
-void PP::addProcess(Process* process) {
-    processes.push_back(process);
-    processPid[process->getProcessID()] = process;
-}
 
-Process* PP::getNextProcess() {
-    if (processes.empty()) {
-        return nullptr;
-    }
-
-    // Filter the processes that have arrived and are in READY state
-    std::vector<Process*> readyProcesses;
-    for (Process* p : processes) {
-        if (p->getState() == Process::READY) {
-            readyProcesses.push_back(p);
-        }
-    }
-
-    if (readyProcesses.empty()) {
-        return nullptr;
-    }
-
-    // Sorting the ready processes based on priority (upper value is higher priority)
-    std::sort(readyProcesses.begin(), readyProcesses.end(), [](Process* a, Process* b) {
-        return a->getPriority() > b->getPriority();
-    });
-
-    Process* highestPriorityProcess = readyProcesses.front();
-
-    // Remove the selected process from the main process list
-    auto it = std::find(processes.begin(), processes.end(), highestPriorityProcess);
-    if (it != processes.end()) {
-        processes.erase(it);
-    }
-
-    return highestPriorityProcess;
-}
 
 void PP::updateReadyProcesses(int currentTime) {
     for (auto &pair : processPid) {
