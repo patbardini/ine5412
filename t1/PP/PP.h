@@ -12,18 +12,13 @@ class PP : public SchedulingAlgorithm {
 public:
     PP();
 
-    void addProcess(Process* process) override;
-    Process* getNextProcess() override;
-    void updateReadyProcesses(int currentTime) override;
-    Process* getHighestPriorityProcess(Process* currentProcess);
-    float calculateAverageTurnaroundTime();
-    float calculateAverageWaitingTime();
-    void printAverageTime(const std::string& title, int (Process::*getter)() const, std::function<float()> calculateAverage);
+    Process* sortReadyProcesses(std::vector<Process*> readyProcesses) override;
     void simulate() override;
 
 private:
-    std::vector<Process*> processes;
-    std::map<int, Process*> processPid;  // to quickly access processes by their PID
+    std::string algorithmName = "Priority Preemptive";
+
+    Process* getHighestPriorityProcess(Process* currentProcess);
 };
 
 #endif // PP_H

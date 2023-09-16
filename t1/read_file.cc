@@ -69,7 +69,7 @@ public:
 
     void print_processes_params() {
         for (auto p : processes) {
-            cout << "Process ID = " << p->getProcessID() 
+            cout << "\nProcess ID = " << p->getProcessID() 
                  << " Arrival Time = " << p->getArrivalTime()
                  << " Burst Time = " << p->getBurstTime()
                  << " Priority = " << p->getPriority() << endl;

@@ -11,19 +11,13 @@
 
 class SJF : public SchedulingAlgorithm{
 private:
-    std::vector<Process*> processes;
-    std::vector<Process*> readyQueue;
-    std::map<int, Process*> processPid;
+
+    Process* sortReadyProcesses(std::vector<Process*> readyProcesses) override;
+    void simulate() override;
+
 public:
     SJF();
-
-    void addProcess(Process* process) override;
-    Process* getNextProcess();
-    void updateReadyProcesses(int currentTime) override;
-    float calculateAverageTurnaroundTime();
-    float calculateAverageWaitingTime();
-    void printAverageTime(const std::string& title, int (Process::*getter)() const, std::function<float()> calculateAverage);
-    void simulate() override;
+    const char * algorithmName = "Shortest Job First";
 };
 
 #endif // SJF_H
