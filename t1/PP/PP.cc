@@ -66,15 +66,46 @@ Process* PP::getHighestPriorityProcess(Process* currentProcess) {
 
 }
 
+float PP::calculateAverageTurnaroundTime() {
+    float average = 0;
+    for (auto &pair : processPid) {
+        int turnaroundTime = pair.second->getTurnaroundTime();
+        average += turnaroundTime;
+    }
+    average /= processPid.size();
+    return average;
+}
+
+float PP::calculateAverageWaitingTime() {
+    float average = 0;
+    for (auto &pair : processPid) {
+        int waitingTime = pair.second->getWaitingTime();
+        average += waitingTime;
+    }
+    average /= processPid.size();
+    return average;
+}
+
+void PP::printAverageTime(const std::string& title, int (Process::*getter)() const, std::function<float()> calculateAverage) {
+    std::cout << title << "\n";
+    for (const auto& pair : processPid) {
+        Process* p = pair.second;
+        std::cout << "P" << pair.first << " = " << (p->*getter)() << "\n";
+    }
+    std::cout << "Média = " << calculateAverage() << "\n";
+    std::cout << "\n";
+}
+
 void PP::simulate() {
     std::cout << "-> Início algoritmo Priority Preemptive...\n\n";
 
     int currentTime = 0;
-    std::cout << "tempo ";
-
     // Create a copy of all processes for output purposes
     std::vector<Process*> allProcesses = processes;  
+  
     Process* prevProcess = nullptr;
+
+    std::cout << "tempo ";
     for (size_t i = 1; i <= allProcesses.size(); i++) {
         std::cout << "P" << i << " ";
     }
@@ -89,6 +120,7 @@ void PP::simulate() {
                     break;
                 case Process::READY:
                     std::cout << "-- ";
+                    p->setWaitingTime(p->getWaitingTime()+1);
                     break;
                 default:
                     std::cout << "   ";
@@ -109,9 +141,11 @@ void PP::simulate() {
         while (!currentProcess || currentProcess->getArrivalTime() > currentTime) {
             printProcessesState();
             currentTime++;
+            updateReadyProcesses(currentTime);
             if (!currentProcess) {
                 currentProcess = getNextProcess();
             }
+            
         }
 
         currentProcess->setStartTime(currentTime);
@@ -126,7 +160,6 @@ void PP::simulate() {
                 break;
             }
             printProcessesState();
-
             currentTime++;
             currentProcess->setRemainingTime(currentProcess->getRemainingTime()-1);
         }
@@ -138,6 +171,12 @@ void PP::simulate() {
         } 
     }
 
+    std::cout << "\n";
+    std::cout << "----------------------------------------\n";
+
+    printAverageTime("Tempo de Turnaround para cada processo:", &Process::getTurnaroundTime, [&]() { return calculateAverageTurnaroundTime(); });
+    printAverageTime("Tempo de espera para cada processo:", &Process::getWaitingTime, [&]() { return calculateAverageWaitingTime(); });
+  
     const char * algorithmName = "Priority Preemptive";
     printResults(scheduler->getContextSwitches(), algorithmName);
 }

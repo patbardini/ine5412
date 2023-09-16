@@ -5,6 +5,8 @@
 
 #include <queue>
 #include <map>
+#include <functional>
+#include <string>
 #include "SchedulingAlgorithm.h"
 #include "Scheduler.h"
 
@@ -20,6 +22,9 @@ public:
     void addProcess(Process* process) override;
     Process* getNextProcess() override;
     void updateReadyProcesses(int currentTime) override;
+    float calculateAverageTurnaroundTime();
+    float calculateAverageWaitingTime();
+    void printAverageTime(const std::string& title, int (Process::*getter)() const, std::function<float()> calculateAverage);
     void simulate() override;
 };
 
