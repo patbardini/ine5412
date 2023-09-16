@@ -102,6 +102,8 @@ void PP::simulate() {
     int currentTime = 0;
     // Create a copy of all processes for output purposes
     std::vector<Process*> allProcesses = processes;  
+  
+    Process* prevProcess = nullptr;
 
     std::cout << "tempo ";
     for (size_t i = 1; i <= allProcesses.size(); i++) {
@@ -131,6 +133,10 @@ void PP::simulate() {
     while (!processes.empty()) {
         updateReadyProcesses(currentTime);
         Process* currentProcess = getNextProcess();
+
+        if (prevProcess != currentProcess && scheduler) {
+            scheduler->contextSwitch(prevProcess, currentProcess);
+        }
 
         while (!currentProcess || currentProcess->getArrivalTime() > currentTime) {
             printProcessesState();
@@ -170,7 +176,7 @@ void PP::simulate() {
 
     printAverageTime("Tempo de Turnaround para cada processo:", &Process::getTurnaroundTime, [&]() { return calculateAverageTurnaroundTime(); });
     printAverageTime("Tempo de espera para cada processo:", &Process::getWaitingTime, [&]() { return calculateAverageWaitingTime(); });
-
-    std::cout << "\nPriority Preemptive fim.\n";
-    std::cout << "========================================\n";
+  
+    const char * algorithmName = "Priority Preemptive";
+    printResults(scheduler->getContextSwitches(), algorithmName);
 }

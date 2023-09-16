@@ -2,6 +2,7 @@
 #define PP_H
 
 #include "SchedulingAlgorithm.h"
+#include "Scheduler.h"
 #include <vector>
 #include <functional>
 #include <string>

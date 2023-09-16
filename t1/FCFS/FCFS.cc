@@ -12,16 +12,6 @@ void FCFS::addProcess(Process* process) {
     processPid[process->getProcessID()] = process;
 }
 
-void FCFS::addProcesses(const std::vector<Process*>& processes) {
-    for (Process* p : processes) {
-        addProcess(p);
-    }
-}
-
-void FCFS::contextSwitch(Process* fromProcess, Process* toProcess) {
-    SchedulingAlgorithm::contextSwitch(fromProcess, toProcess);
-}
-
 
 Process* FCFS::getNextProcess() {
     if (queue.empty()) {
@@ -35,7 +25,6 @@ Process* FCFS::getNextProcess() {
 void FCFS::updateReadyProcesses(int currentTime) {
     for (auto &pair : processPid) {
         Process* p = pair.second;
-        // If the process has arrived and is not executing, set it to ready
         if (p->getArrivalTime() <= currentTime && p->getState() == Process::NEW) {
             p->setState(Process::READY);
         } 
@@ -77,8 +66,8 @@ void FCFS::simulate() {
     std::cout << "-> Início algoritmo First Come First Served...\n\n";
 
     int currentTime = 0;
-    int totalProcesses = queue.size();  // get the total number of processes
-    std::vector<std::string> output;    // to store the output for each time interval
+    int totalProcesses = queue.size();
+    std::vector<std::string> output;
     Process* prevProcess = nullptr;
 
     std::cout << "tempo ";
@@ -118,9 +107,9 @@ void FCFS::simulate() {
             }
         }
 
-        if (prevProcess != nullptr) {
-            contextSwitch(prevProcess, currentProcess);
-        }
+        // Troca de contexto se o processo atual for diferente do anterior
+        if (prevProcess != currentProcess && scheduler) {
+            scheduler->contextSwitch(prevProcess, currentProcess);
 
         currentProcess->setStartTime(currentTime);
         currentProcess->setState(Process::EXECUTING);
@@ -135,8 +124,6 @@ void FCFS::simulate() {
         currentProcess->setEndTime(currentTime);
         currentProcess->setTurnaroundTime(currentProcess->getEndTime() - currentProcess->getArrivalTime());
         currentProcess->setState(Process::FINISHED);
-
-        contextSwitch(currentProcess, nullptr);
         prevProcess = currentProcess;
     }
 
@@ -146,6 +133,6 @@ void FCFS::simulate() {
     printAverageTime("Tempo de Turnaround para cada processo:", &Process::getTurnaroundTime, [&]() { return calculateAverageTurnaroundTime(); });
     printAverageTime("Tempo de espera para cada processo:", &Process::getWaitingTime, [&]() { return calculateAverageWaitingTime(); });
 
-    std::cout << "\nFirst Come First Served fim.\n";
-    std::cout << "========================================\n";
+    const char * algorithmName = "First Come First Served";
+    printResults(scheduler->getContextSwitches(), algorithmName);
 }

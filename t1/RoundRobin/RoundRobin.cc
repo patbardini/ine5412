@@ -8,11 +8,6 @@ void RoundRobin::addProcess(Process* process) {
     processPid[process->getProcessID()] = process;
 }
 
-void RoundRobin::addProcesses(const std::vector<Process*>& processes) {
-    for (Process* p : processes) {
-        addProcess(p);
-    }
-}
 
 Process* RoundRobin::getNextProcess() {
     if (queue.empty()) {
@@ -69,6 +64,9 @@ void RoundRobin::simulate() {
     int currentTime = 0;
     int totalProcesses = queue.size();
 
+    Process* prevProcess = nullptr;
+    std::vector<std::string> output;
+
     std::cout << "tempo ";
     for (int i = 1; i <= totalProcesses; i++) {
         std::cout << "P" << i << " ";
@@ -98,6 +96,9 @@ void RoundRobin::simulate() {
         updateReadyProcesses(currentTime);
         Process* currentProcess = getNextProcess();
 
+        if (prevProcess != currentProcess && scheduler) {
+            scheduler->contextSwitch(prevProcess, currentProcess);
+
         while (!currentProcess || currentProcess->getArrivalTime() > currentTime) {
             printProcessesState();
             currentTime++;
@@ -105,6 +106,7 @@ void RoundRobin::simulate() {
             if (!currentProcess) {
                 currentProcess = getNextProcess();
             }
+
         }
 
         currentProcess->setStartTime(currentTime);
@@ -128,8 +130,7 @@ void RoundRobin::simulate() {
             currentProcess->setTurnaroundTime(currentTime - currentProcess->getArrivalTime());
             currentProcess->setState(Process::FINISHED);
         }
-
-        contextSwitches++;
+        prevProcess = currentProcess;
     }
 
     std::cout << "\n";
@@ -138,6 +139,7 @@ void RoundRobin::simulate() {
     printAverageTime("Tempo de Turnaround para cada processo:", &Process::getTurnaroundTime, [&]() { return calculateAverageTurnaroundTime(); });
     printAverageTime("Tempo de espera para cada processo:", &Process::getWaitingTime, [&]() { return calculateAverageWaitingTime(); });
 
-    std::cout << "\nRound Robin fim.\n";
-    std::cout << "========================================\n";
+
+    const char * algorithmName = "Round Robin";
+    printResults(scheduler->getContextSwitches(), algorithmName);
 }

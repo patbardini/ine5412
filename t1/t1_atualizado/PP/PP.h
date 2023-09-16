@@ -1,23 +1,23 @@
-#ifndef PNP_H
-#define PNP_H
+#ifndef PP_H
+#define PP_H
 
 #include "SchedulingAlgorithm.h"
 #include "Scheduler.h"
 #include <vector>
-#include <functional>
-#include <string>
 #include <map>
 
-class PNP : public SchedulingAlgorithm {
+class PP : public SchedulingAlgorithm {
 public:
-    PNP();
+    PP();
 
     void addProcess(Process* process) override;
+
     Process* getNextProcess() override;
+
     void updateReadyProcesses(int currentTime) override;
-    float calculateAverageTurnaroundTime();
-    float calculateAverageWaitingTime();
-    void printAverageTime(const std::string& title, int (Process::*getter)() const, std::function<float()> calculateAverage);
+
+    Process* getHighestPriorityProcess(Process* currentProcess);
+
     void simulate() override;
 
 private:
@@ -25,4 +25,4 @@ private:
     std::map<int, Process*> processPid;  // to quickly access processes by their PID
 };
 
-#endif // PNP_H
+#endif // PP_H
