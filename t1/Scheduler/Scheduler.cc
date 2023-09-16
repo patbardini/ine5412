@@ -23,9 +23,11 @@ void Scheduler::setAlgorithm(SchedulingAlgorithm* alg) {
 void Scheduler::resetProcesses(const std::vector<Process*>& processes) {
     for (Process* p : processes) {
         p->setState(Process::NEW);
-        p->setRemainingTime(p->getBurstTime());
         p->setWaitingTime(0);
         p->setTurnaroundTime(0);
+        p->setStartTime(0);
+        p->setEndTime(0);
+        p->setRemainingTime(p->getBurstTime());
         // Reset other properties if necessary
     }
 }
