@@ -16,7 +16,9 @@ public:
     void simulate() override;
 
 private:
+    std::string algorithmName = "Priority Preemptive";
 
+    Process* getHighestPriorityProcess(Process* currentProcess);
 };
 
 #endif // PP_H

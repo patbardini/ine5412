@@ -13,19 +13,16 @@
 // RoundRobin Header File
 class RoundRobin : public SchedulingAlgorithm {
 private:
-    std::queue<Process*> queue;
     const int timeQuantum = 2;
-    std::map<int, Process*> processPid; // mapeia o pid ao Process
+
+    const char * algorithmName = "Round Robin";
+    void simulate() override;
+    Process* sortReadyProcesses(std::vector<Process*> readyProcesses) override;
 
 public:
     RoundRobin();
-    void addProcess(Process* process) override;
-    Process* getNextProcess() override;
-    void updateReadyProcesses(int currentTime) override;
-    float calculateAverageTurnaroundTime();
-    float calculateAverageWaitingTime();
-    void printAverageTime(const std::string& title, int (Process::*getter)() const, std::function<float()> calculateAverage);
-    void simulate() override;
+
+    virtual ~RoundRobin() {}  // Virtual Destructor
 };
 
 #endif // RoundRobin_H

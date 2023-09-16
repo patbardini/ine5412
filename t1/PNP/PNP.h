@@ -17,7 +17,6 @@ public:
 
 private:
     std::string algorithmName = "Priority Non-Preemptive";
-
 };
 
 #endif // PNP_H

@@ -97,10 +97,6 @@ public:
         return average;
     }
 
-    virtual void printAverageTime(const std::string& title, int (Process::*getter)() const, std::function<float()> calculateAverage) {
-        
-    }
-
     virtual void printResults(int contextSwitchCount, std::string algorithmName) {
         
         std::cout << "\n";
