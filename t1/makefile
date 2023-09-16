@@ -5,7 +5,7 @@ CC = g++
 CFLAGS = -Wall -std=c++11 -IReadFile -IScheduler -IProcess -ISchedulingAlgorithm -ICPU -IFCFS -ISJF -IPNP -IPP -IRoundRobin
 
 # Target executable name
-TARGET = read_file
+TARGET = main
 
 # .cc files 
 SRC_FILES = Scheduler/Scheduler.cc Process/Process.cc CPU/CPU.cc FCFS/FCFS.cc SJF/SJF.cc PNP/PNP.cc PP/PP.cc RoundRobin/RoundRobin.cc read_file.cc

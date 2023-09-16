@@ -9,15 +9,23 @@
 #include "Scheduler.h"
 #include <map>
 
-class SJF : public SchedulingAlgorithm{
+// Classe SJF (Shortest Job First) que herda de SchedulingAlgorithm.
+// Esta classe implementa o algoritmo de escalonamento Shortest Job First.
+class SJF : public SchedulingAlgorithm {
 private:
-
-    Process* sortReadyProcesses(std::vector<Process*> readyProcesses) override;
-    void simulate() override;
+    // Nome do algoritmo, usado para fins de impressão.
+    const char * algorithmName = "Shortest Job First";
 
 public:
+    // Construtor padrão da classe SJF.
     SJF();
-    const char * algorithmName = "Shortest Job First";
+
+    // Função para ordenar os processos prontos com base no tempo de burst.
+    // Retorna o processo com o menor tempo de burst.
+    Process* sortReadyProcesses(std::vector<Process*> readyProcesses) override;
+
+    // Função para simular o algoritmo Shortest Job First.
+    void simulate() override;
 };
 
 #endif // SJF_H

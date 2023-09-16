@@ -13,7 +13,7 @@ Process::Process(int processID, int arrivalTime, int burstTime, int priority)
       endTime(0),
       remainingTime(burstTime),
       state(NEW),
-      cpuContext() {}  // This calls the default constructor of CPUContext
+      cpuContext() {}  // O contexto da CPU é armazenado dentro do processo, respondendo à pergunta do trabalho
 
 Process::~Process() {}
 

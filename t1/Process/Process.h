@@ -6,33 +6,34 @@
 // Process Header File
 class Process {
 private:
-    int processID;
-    int arrivalTime;
-    int burstTime;
-    int priority;
-    int waitingTime;
-    int turnaroundTime;
-    int startTime;
-    int endTime;
-    int remainingTime;
-    int state;
-    CPU::Context cpuContext;
+    int processID; // Identificador do processo
+    int arrivalTime; // Tempo de chegada do processo
+    int burstTime; // Tempo de execução do processo
+    int priority; // Prioridade do processo
+    int waitingTime; // Tempo de espera do processo
+    int turnaroundTime; // Tempo de retorno do processo
+    int startTime; // Tempo de início do processo
+    int endTime; // Tempo de término do processo
+    int remainingTime; // Tempo restante de execução do processo
+    int state; // Estado do processo
+    CPU::Context cpuContext;  // O contexto da CPU é armazenado dentro do processo, respondendo à pergunta do trabalho
 
 public:
+    // Enumeração para os estados do processo
     enum State {
-        NEW, 
-        READY, 
-        EXECUTING, 
-        FINISHED 
+        NEW,             // Novo 
+        READY,           // Pronto
+        EXECUTING,       // Executando
+        FINISHED         // Finalizado
     };
 
-    // Constructor
+    // Construtor
     Process(int processID, int arrivalTime, int burstTime, int priority);
 
-    // Destructor
+    // Destrutor
     ~Process();
 
-    // Add getter and setter methods for private members if necessary
+    // Getters e Setters
     int getProcessID() const { return processID; }
     int getArrivalTime() const { return arrivalTime; }
     int getBurstTime() const { return burstTime; }
@@ -55,6 +56,7 @@ public:
     void setRemainingTime(int rt) { remainingTime = rt; }
     void setState(int s) { state = s; }
 
+    // Funções para salvar e obter o contexto da CPU
     void saveContext(const CPU::Context& currentContext);
     CPU::Context getContext() const;
 

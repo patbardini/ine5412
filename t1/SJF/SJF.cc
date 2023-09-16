@@ -2,8 +2,10 @@
 #include <algorithm>
 #include <iostream>
 
+// Construtor da classe SJF (Shortest Job First)
 SJF::SJF() {}
 
+// Função para ordenar os processos prontos com base no tempo de burst (menor tempo de burst primeiro)
 Process* SJF::sortReadyProcesses(std::vector<Process*> readyProcesses) {
 
     std::sort(readyProcesses.begin(), readyProcesses.end(), [](Process* a, Process* b) {
@@ -15,7 +17,7 @@ Process* SJF::sortReadyProcesses(std::vector<Process*> readyProcesses) {
     return shortestProcess;
 }
 
-
+// Função para simular o algoritmo Shortest Job First
 void SJF::simulate() {
     std::cout << "-> Início algoritmo Shortest Job First...\n\n";
 
@@ -29,6 +31,7 @@ void SJF::simulate() {
     }
     std::cout << "\n";
 
+    // Função auxiliar para imprimir o estado dos processos
     auto printProcessesState = [&]() {
         std::cout << " " << currentTime << "-" << (currentTime + 1) << "  ";
         for (Process* p : allProcesses) {
@@ -48,10 +51,12 @@ void SJF::simulate() {
         std::cout << "\n";
     };
 
+    // Enquanto ainda houver processos para serem executados
     while (!processes.empty()) {
         updateReadyProcesses(currentTime);
         Process* currentProcess = getNextProcess();
 
+        // Espera até que um processo esteja pronto ou até que o próximo processo chegue
         while (!currentProcess || currentProcess->getArrivalTime() > currentTime) {
             printProcessesState();
             currentTime++;
@@ -69,6 +74,7 @@ void SJF::simulate() {
         currentProcess->setStartTime(currentTime);
         currentProcess->setState(Process::EXECUTING);
 
+        // Executa o processo pelo seu tempo de burst
         for (int j = 0; j < currentProcess->getBurstTime(); ++j) {
             updateReadyProcesses(currentTime);
             printProcessesState();
@@ -76,11 +82,13 @@ void SJF::simulate() {
             currentProcess->setRemainingTime(currentProcess->getRemainingTime()-1);
         }
 
+        // Atualiza as métricas do processo após sua conclusão
         currentProcess->setEndTime(currentTime);
         currentProcess->setTurnaroundTime(currentProcess->getEndTime() - currentProcess->getArrivalTime());
         currentProcess->setState(Process::FINISHED);
         prevProcess = currentProcess;
     }
 
+    // Imprime os resultados finais
     printResults(scheduler->getContextSwitches(), algorithmName);
 }

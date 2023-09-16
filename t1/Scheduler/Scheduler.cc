@@ -1,30 +1,34 @@
-// Scheduler.cc
-
 #include "Scheduler.h"
 
+// Construtor da classe Scheduler que inicializa o algoritmo de escalonamento
 Scheduler::Scheduler(SchedulingAlgorithm* alg) : algorithm(alg) {
-    algorithm->setScheduler(this);
-    contextSwitches = 0;
+    algorithm->setScheduler(this);  // Associa este escalonador ao algoritmo
+    contextSwitches = 0;  // Inicializa o contador de trocas de contexto
 }
 
+// Adiciona um processo ao algoritmo de escalonamento
 void Scheduler::addProcess(Process* process) {
     algorithm->addProcess(process);
 }
 
+// Obtém o próximo processo do algoritmo de escalonamento
 Process* Scheduler::getNextProcess() {
     return algorithm->getNextProcess();
 }
 
+// Simula o algoritmo de escalonamento
 void Scheduler::simulate() {
     algorithm->simulate();
 }
 
+// Define o algoritmo de escalonamento e reinicia o contador de trocas de contexto
 void Scheduler::setAlgorithm(SchedulingAlgorithm* alg) {
     algorithm = alg;
     algorithm->setScheduler(this);
     contextSwitches = 0;
 }
 
+// Reinicia as propriedades dos processos
 void Scheduler::resetProcesses(const std::vector<Process*>& processes) {
     for (Process* p : processes) {
         p->setState(Process::NEW);
@@ -37,20 +41,21 @@ void Scheduler::resetProcesses(const std::vector<Process*>& processes) {
     }
 }
 
-// Corrected the contextSwitch function definition
+// Realiza uma troca de contexto entre dois processos
 void Scheduler::contextSwitch(Process* fromProcess, Process* toProcess) {
     if (fromProcess) {
-        // Save the current context of the CPU to the fromProcess
+        // Salva o contexto atual da CPU no processo de origem
         fromProcess->saveContext(cpu.getCurrentContext());
     }
 
     if (toProcess) {
-        // Restore the saved context from toProcess to the CPU.
+        // Restaura o contexto salvo do processo de destino para a CPU
         cpu.setCurrentContext(toProcess->getContext());
     }
-    contextSwitches++;
+    contextSwitches++;  // Incrementa o contador de trocas de contexto
 }
 
+// Destrutor da classe Scheduler
 Scheduler::~Scheduler() {
-    // Cleanup if necessary
+    // Limpeza, se necessário
 }

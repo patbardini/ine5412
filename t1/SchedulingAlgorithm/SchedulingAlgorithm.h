@@ -11,36 +11,39 @@
 #include "Process.h"
 
 
-class Scheduler; // Forward declaration
+class Scheduler; // Declaração antecipada da classe Scheduler
 
 // SchedulingAlgorithm Header File
 class SchedulingAlgorithm 
 {
 public:
-    // Virtual destructor for correct cleanup when using polymorphism
+    // Construtor
     virtual ~SchedulingAlgorithm() {}
 
-    // Simulate the scheduling algorithm
+    // Simula o algoritmo de escalonamento
     virtual void simulate() = 0;
 
-    // Add a single process to the scheduler
+    // Adiciona um processo ao algoritmo de escalonamento
     virtual void addProcess(Process* process) {
         processes.push_back(process);
         processPid[process->getProcessID()] = process;
     }
 
-    // Adds multiple processes to the scheduler
+    // Adiciona vários processos ao algoritmo de escalonamento
     virtual void addProcesses(const std::vector<Process*>& processes) {
         for(Process* process : processes) {
             addProcess(process);
         }
     }
 
+    // Obtém o próximo processo do algoritmo de escalonamento
     virtual Process* getNextProcess() {
+        // Se não houver processos, retorna nullptr
         if (processes.empty()) {
             return nullptr;
         }
-
+        
+        // Atualiza os processos prontos 
         std::vector<Process*> readyProcesses;
         for (Process* p : processes) {
             if (p->getState() == Process::READY) {
@@ -48,21 +51,25 @@ public:
             }
         }
 
+        // Se não houver processos prontos, retorna nullptr
         if (readyProcesses.empty()) {
             return nullptr;
         }
 
+        // Ordena os processos prontos com base na ordem em que o algoritmo de escalonamento deseja executá-los
         Process* selectedProcess = sortReadyProcesses(readyProcesses);
 
+        // Remove o processo selecionado da lista de processos
         auto it = std::find(processes.begin(), processes.end(), selectedProcess);
         if (it != processes.end()) {
             processes.erase(it);
         }
 
+        // Retorna o processo selecionado
         return selectedProcess;
     }
 
-    // Update the ready processes
+    // Atualiza os processos prontos para executar
     virtual void updateReadyProcesses(int currentTime) {
         for (auto &pair : processPid) {
             Process* p = pair.second;
@@ -72,11 +79,12 @@ public:
         }
     }
 
-    // Set the scheduler
+    // Define o Scheduler associado ao algoritmo de escalonamento
     virtual void setScheduler(Scheduler* sched) {
         scheduler = sched;
     }
 
+    // Calcula o tempo médio de turnaround
     virtual float calculateAverageTurnaroundTime() {
         float average = 0;
         for (auto &pair : processPid) {
@@ -87,6 +95,7 @@ public:
         return average;
     }
 
+    // Calcula o tempo médio de espera
     virtual float calculateAverageWaitingTime() {
         float average = 0;
         for (auto &pair : processPid) {
@@ -97,6 +106,7 @@ public:
         return average;
     }
 
+    // Imprime os resultados da simulação
     virtual void printResults(int contextSwitchCount, std::string algorithmName) {
         
         std::cout << "\n";
@@ -129,11 +139,11 @@ public:
 
 protected:
     // Pointer to the scheduler
-    Scheduler* scheduler = nullptr;
-    std::vector<Process*> processes;
-    std::map<int, Process*> processPid;
+    Scheduler* scheduler = nullptr; // Ponteiro para o escalonador
+    std::vector<Process*> processes; // Lista de processos
+    std::map<int, Process*> processPid; // Mapa de processos com base no PID
 
-    virtual Process* sortReadyProcesses(std::vector<Process*> readyProcesses) = 0;
+    virtual Process* sortReadyProcesses(std::vector<Process*> readyProcesses) = 0; // Função virtual para ordenar os processos prontos de acordo com o algoritmo de escalonamento
 };
 
 #endif // SCHEDULINGALGORITHM_H

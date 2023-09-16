@@ -3,31 +3,40 @@
 
 #include <cstdint>
 
+// Classe que representa a Unidade Central de Processamento (CPU) do simulador INE5412.
+// Esta classe abstrai o funcionamento de uma CPU hipotética mencionada no trabalho.
 class CPU {
 public:
+    // Classe aninhada que representa o contexto da CPU.
+    // O contexto é usado para salvar e restaurar o estado da CPU durante as trocas de contexto entre processos.
     class Context {
     public:
-        uint64_t registers[6]; // 6 general-purpose registers
-        uint64_t SP;           // Stack pointer
-        uint64_t PC;           // Program counter
-        uint64_t ST;           // Status
+        uint64_t registers[6]; // 6 registros de propósito geral, conforme especificado no trabalho.
+        uint64_t SP;           // Ponteiro de pilha (Stack Pointer).
+        uint64_t PC;           // Contador de programa (Program Counter).
+        uint64_t ST;           // Status da CPU.
 
-        Context();
-        Context(const Context& other);
-        ~Context();
+        Context();                      // Construtor padrão que inicializa os registros.
+        Context(const Context& other);  // Construtor de cópia.
+        ~Context();                     // Destrutor.
     };
 
-    CPU();
-    ~CPU();
+    CPU();  // Construtor da CPU. Inicializa os registros e outros componentes.
+    ~CPU(); // Destrutor da CPU.
 
-    void setCurrentContext(const Context& context); // Restore the CPU context with the given values
-    Context getCurrentContext() const; // Fetch the current context of the CPU
+    // Restaura o contexto atual da CPU com os valores fornecidos.
+    // Isso é usado durante a troca de contexto entre processos.
+    void setCurrentContext(const Context& context);
+    
+    // Obtém o contexto atual da CPU.
+    // Isso é usado para salvar o estado atual da CPU antes de uma troca de contexto.
+    Context getCurrentContext() const;
 
 private:
-    uint64_t registers[6]; // Actual 6 general-purpose registers of the CPU
-    uint64_t SP;           // Actual Stack pointer of the CPU
-    uint64_t PC;           // Actual Program counter of the CPU
-    uint64_t ST;           // Actual Status of the CPU
+    uint64_t registers[6]; // 6 registros reais de propósito geral da CPU.
+    uint64_t SP;           // Ponteiro de pilha real da CPU.
+    uint64_t PC;           // Contador de programa real da CPU.
+    uint64_t ST;           // Status real da CPU.
 };
 
 #endif // CPU_H

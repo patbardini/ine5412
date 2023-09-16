@@ -1,44 +1,44 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
-#include "SchedulingAlgorithm.h"  // This will include Process.h implicitly
+#include "SchedulingAlgorithm.h"  // Inclusão necessária para a classe Scheduler
 #include "CPU.h"
 
 class Scheduler {
 public:
-    // Constructor to initialize with a specific scheduling algorithm
+    // Construtor - recebe um ponteiro para o algoritmo de escalonamento
     Scheduler(SchedulingAlgorithm* alg);
 
-    // Add a single process to the current scheduling algorithm
+    // Adiciona um processo ao algoritmo de escalonamento
     void addProcess(Process* process);
 
-    // Fetch the next process based on the current scheduling algorithm's logic
+    // Obtém o próximo processo do algoritmo de escalonamento
     Process* getNextProcess();
 
-    // Run the simulation for the current scheduling algorithm
+    // Simula o algoritmo de escalonamento
     void simulate();
 
-    // Reset the processes to their initial state
+    // Define o algoritmo de escalonamento e reinicia o contador de trocas de contexto
     void resetProcesses(const std::vector<Process*>& processes);
 
-    // The context switch function
+    // Realiza uma troca de contexto entre dois processos
     void contextSwitch(Process* fromProcess, Process* toProcess);
 
-    // Destructor
+    // Destrucor
     ~Scheduler();
 
-    // Getters and setters
+    // Getters e setters
 
-    void setAlgorithm(SchedulingAlgorithm* alg); // Change the current scheduling algorithm
+    void setAlgorithm(SchedulingAlgorithm* alg); // Seta o próximo algoritmo de escalonamento
 
-    CPU& getCPU() { return cpu; } // Get a reference to the CPU
+    CPU& getCPU() { return cpu; }
 
-    int getContextSwitches() { return contextSwitches; } // Get the number of context switches
+    int getContextSwitches() { return contextSwitches; } // 
 
 private:
-    SchedulingAlgorithm* algorithm;  // Pointer to the chosen scheduling algorithm
-    CPU cpu;                         // The CPU
-    int contextSwitches;         // Number of context switches
+    SchedulingAlgorithm* algorithm;  // O algoritmo de escalonamento
+    CPU cpu;                         // A CPU
+    int contextSwitches;         // Contador de trocas de contexto
 };
 
 #endif // SCHEDULER_H

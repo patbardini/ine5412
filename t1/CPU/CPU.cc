@@ -1,7 +1,8 @@
 #include "CPU.h"
-// CPU INE5412
+// Implementação da classe CPU para o simulador INE5412.
 
-// Initializer for the Context nested class
+// Construtor padrão para a classe Context da CPU.
+// Inicializa todos os registros e componentes com 0.
 CPU::Context::Context() {
     for (int i = 0; i < 6; ++i) {
         registers[i] = 0;
@@ -11,6 +12,8 @@ CPU::Context::Context() {
     ST = 0;
 }
 
+// Construtor de cópia para a classe Context.
+// Copia os valores dos registros e outros componentes do contexto fornecido.
 CPU::Context::Context(const Context& other) {
     for (int i = 0; i < 6; ++i) {
         registers[i] = other.registers[i];
@@ -20,11 +23,14 @@ CPU::Context::Context(const Context& other) {
     ST = other.ST;
 }
 
+// Destrutor da classe Context.
+// Como não há alocação dinâmica de recursos, o corpo do destrutor é mantido vazio.
 CPU::Context::~Context() {
-    // Destructor body can be kept empty unless we allocate resources dynamically
+    // Nada a ser feito aqui.
 }
 
-// Initializer for the CPU class
+// Construtor da classe CPU.
+// Inicializa todos os registros e componentes da CPU com 0.
 CPU::CPU() {
     for (int i = 0; i < 6; ++i) {
         registers[i] = 0;
@@ -34,10 +40,13 @@ CPU::CPU() {
     ST = 0;
 }
 
+// Destrutor da classe CPU.
+// Como não há alocação dinâmica de recursos, o corpo do destrutor é mantido vazio.
 CPU::~CPU() {
-    // Destructor body can be kept empty unless we allocate resources dynamically
+    // Nada a ser feito aqui.
 }
 
+// Define o contexto atual da CPU com base no contexto fornecido.
 void CPU::setCurrentContext(const Context& context) {
     for (int i = 0; i < 6; ++i) {
         registers[i] = context.registers[i];
@@ -47,6 +56,7 @@ void CPU::setCurrentContext(const Context& context) {
     ST = context.ST;
 }
 
+// Obtém e retorna o contexto atual da CPU.
 CPU::Context CPU::getCurrentContext() const {
     Context context;
     for (int i = 0; i < 6; ++i) {
