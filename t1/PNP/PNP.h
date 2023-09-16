@@ -3,6 +3,8 @@
 
 #include "SchedulingAlgorithm.h"
 #include <vector>
+#include <functional>
+#include <string>
 #include <map>
 
 class PNP : public SchedulingAlgorithm {
@@ -10,11 +12,11 @@ public:
     PNP();
 
     void addProcess(Process* process) override;
-
     Process* getNextProcess() override;
-
     void updateReadyProcesses(int currentTime) override;
-
+    float calculateAverageTurnaroundTime();
+    float calculateAverageWaitingTime();
+    void printAverageTime(const std::string& title, int (Process::*getter)() const, std::function<float()> calculateAverage);
     void simulate() override;
 
 private:
