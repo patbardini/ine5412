@@ -122,9 +122,9 @@ void SJF::simulate() {
         Process* currentProcess = getNextProcess();
 
         while (!currentProcess || currentProcess->getArrivalTime() > currentTime) {
-            updateReadyProcesses(currentTime);
             printProcessesState();
             currentTime++;
+            updateReadyProcesses(currentTime);
             if (!currentProcess) {
                 currentProcess = getNextProcess();
             }
