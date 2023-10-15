@@ -6,7 +6,7 @@
 
 class FIFO : public PageReplacementAlgorithm {
 private:
-    std::queue<int> pages_queue;
+    std::queue<int> pagesQueue;
 public:
     FIFO(int n) : PageReplacementAlgorithm(n) {}
     ~FIFO() {}

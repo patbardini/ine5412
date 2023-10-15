@@ -5,7 +5,7 @@
 
 class LRU : public PageReplacementAlgorithm {
 private:
-    std::vector<int> pages_vector;
+    std::vector<int> pagesVector;
 public:
     LRU(int n) : PageReplacementAlgorithm(n) {}
     ~LRU() {}

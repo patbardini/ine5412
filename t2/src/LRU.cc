@@ -1,7 +1,7 @@
 #include "LRU.h"
 
 std::vector<int> LRU::getPages() {
-    return pages_vector;
+    return pagesVector;
 }
 
 void LRU::calculatePageFaults(std::vector<int> references) {

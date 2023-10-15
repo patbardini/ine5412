@@ -5,7 +5,7 @@
 
 class OPT : public PageReplacementAlgorithm {
 private:
-    std::vector<int> pages_vector;
+    std::vector<int> pagesVector;
 public:
     OPT(int n) : PageReplacementAlgorithm(n) {}
     ~OPT() {}

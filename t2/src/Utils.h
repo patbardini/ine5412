@@ -6,7 +6,7 @@
 
 class Utils {
 public:
-    static std::vector<int> read_file();
+    static std::vector<int> readFile();
 };
 
 #endif // Utils_H

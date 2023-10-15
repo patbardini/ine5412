@@ -2,7 +2,7 @@
 #include <algorithm>
 
 std::vector<int> OPT::getPages() {
-    return pages_vector;
+    return pagesVector;
 }
 
 void OPT::calculatePageFaults(std::vector<int> references) {
@@ -11,22 +11,22 @@ void OPT::calculatePageFaults(std::vector<int> references) {
     for (int page : references) {
         nextReferences.erase(nextReferences.begin());
 
-        if (std::find(pages_vector.begin(), pages_vector.end(), page) == pages_vector.end()) {
-            if (pages_vector.size() >= getNumberOfFrames()) {
+        if (std::find(pagesVector.begin(), pagesVector.end(), page) == pagesVector.end()) {
+            if (pagesVector.size() >= getNumberOfFrames()) {
                 std::vector<int>::iterator toBeReplaced = predict(nextReferences);
-                pages_vector.erase(toBeReplaced);
+                pagesVector.erase(toBeReplaced);
             }
-            pages_vector.push_back(page);
+            pagesVector.push_back(page);
             setPageFaults(getPageFaults()+1);
         }
     }
 }
 
 std::vector<int>::iterator OPT::predict(std::vector<int> nextReferences) {
-    int pageToBeReplaced = pages_vector.front();
+    int pageToBeReplaced = pagesVector.front();
     size_t currentIndex = 0;
 
-    for (int page : pages_vector) {
+    for (int page : pagesVector) {
         std::vector<int>::iterator iter = std::find(nextReferences.begin(), nextReferences.end(), page);
         size_t newIndex = std::distance(nextReferences.begin(), iter);
 
@@ -36,6 +36,6 @@ std::vector<int>::iterator OPT::predict(std::vector<int> nextReferences) {
         }
         
     }
-    std::vector<int>::iterator pageToBeReplacedIt = std::find(pages_vector.begin(), pages_vector.end(), pageToBeReplaced);
-    return pageToBeReplacedIt;
+    std::vector<int>::iterator pageToBeReplacedIter = std::find(pagesVector.begin(), pagesVector.end(), pageToBeReplaced);
+    return pageToBeReplacedIter;
 }
