@@ -1,18 +1,22 @@
 #ifndef PageReplacementAlgorithm_H
 #define PageReplacementAlgorithm_H
 
+#include <list>
+
 class PageReplacementAlgorithm {
 private:
-    int numberOfFrames;
+    unsigned int numberOfFrames;
     int pageFaults;
 public:
-    PageReplacementAlgorithm(int n);
+    PageReplacementAlgorithm(unsigned int n);
     virtual ~PageReplacementAlgorithm();
 
-    int getNumberOfFrames();
+    unsigned int getNumberOfFrames();
     int getPageFaults();
-    void setNumberOfFrames(int n);
+    void setNumberOfFrames(unsigned int n);
     void setPageFaults(int pf);
+
+    virtual void calculatePageFaults(std::list<int> references) = 0;
 };
 
 #endif // PageReplacementAlgorithm_H

@@ -13,7 +13,10 @@ int main(int argc, char *argv[]) {
     std::list<int> references_list = Utils::read_file();
 
     FIFO fifo = FIFO(numberOfFrames);
+    fifo.calculatePageFaults(references_list);
+
     LRU lru = LRU(numberOfFrames);
+
     OPT opt = OPT(numberOfFrames);
 
     std::cout << numberOfFrames << " quadros" << std::endl;

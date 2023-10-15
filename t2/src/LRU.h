@@ -12,6 +12,7 @@ public:
     ~LRU() {}
     
     std::vector<int> getPages();
+    void calculatePageFaults(std::list<int> references) override;
 };
 
 #endif // LRU_H

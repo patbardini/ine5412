@@ -1,13 +1,13 @@
 #include "PageReplacementAlgorithm.h"
 
-PageReplacementAlgorithm::PageReplacementAlgorithm(int n) {
+PageReplacementAlgorithm::PageReplacementAlgorithm(unsigned int n) {
     numberOfFrames = n;
     pageFaults = 0;
 }
 
 PageReplacementAlgorithm::~PageReplacementAlgorithm() {}
 
-int PageReplacementAlgorithm::getNumberOfFrames() {
+unsigned int PageReplacementAlgorithm::getNumberOfFrames() {
     return numberOfFrames;
 }
 
@@ -15,7 +15,7 @@ int PageReplacementAlgorithm::getPageFaults() {
     return pageFaults;
 }
 
-void PageReplacementAlgorithm::setNumberOfFrames(int n) {
+void PageReplacementAlgorithm::setNumberOfFrames(unsigned int n) {
     numberOfFrames = n;
 }
 
