@@ -2,11 +2,11 @@
 #define Utils_H
 
 #include <iostream>
-#include <list>
+#include <vector>
 
 class Utils {
 public:
-    static std::list<int> read_file();
+    static std::vector<int> read_file();
 };
 
 #endif // Utils_H

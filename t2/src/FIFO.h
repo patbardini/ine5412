@@ -12,7 +12,7 @@ public:
     ~FIFO() {}
     
     std::queue<int> getPages();
-    void calculatePageFaults(std::list<int> references) override;
+    void calculatePageFaults(std::vector<int> references) override;
 };
 
 #endif // FIFO_H

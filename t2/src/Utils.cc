@@ -1,7 +1,7 @@
 #include "Utils.h"
 
-std::list<int> Utils::read_file() {
-    std::list<int> references_list;
+std::vector<int> Utils::read_file() {
+    std::vector<int> references_list;
     int reference;
 
     std::cin >> reference;

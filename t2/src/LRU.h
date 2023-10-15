@@ -2,7 +2,6 @@
 #define LRU_H
 
 #include "PageReplacementAlgorithm.h"
-#include <vector>
 
 class LRU : public PageReplacementAlgorithm {
 private:
@@ -12,7 +11,7 @@ public:
     ~LRU() {}
     
     std::vector<int> getPages();
-    void calculatePageFaults(std::list<int> references) override;
+    void calculatePageFaults(std::vector<int> references) override;
 };
 
 #endif // LRU_H
