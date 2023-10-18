@@ -6,13 +6,13 @@
 
 class FIFO : public PageReplacementAlgorithm {
 private:
-    std::queue<int> pages_queue;
+    std::queue<int> pagesQueue;
 public:
     FIFO(int n) : PageReplacementAlgorithm(n) {}
     ~FIFO() {}
     
     std::queue<int> getPages();
-    void calculatePageFaults(std::list<int> references) override;
+    void calculatePageFaults(std::vector<int> references) override;
 };
 
 #endif // FIFO_H

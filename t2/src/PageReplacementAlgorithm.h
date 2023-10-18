@@ -1,7 +1,7 @@
 #ifndef PageReplacementAlgorithm_H
 #define PageReplacementAlgorithm_H
 
-#include <list>
+#include <vector>
 
 class PageReplacementAlgorithm {
 private:
@@ -16,7 +16,7 @@ public:
     void setNumberOfFrames(unsigned int n);
     void setPageFaults(int pf);
 
-    virtual void calculatePageFaults(std::list<int> references) = 0;
+    virtual void calculatePageFaults(std::vector<int> references) = 0;
 };
 
 #endif // PageReplacementAlgorithm_H

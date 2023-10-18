@@ -1,14 +1,14 @@
 #include "Utils.h"
 
-std::list<int> Utils::read_file() {
-    std::list<int> references_list;
+std::vector<int> Utils::readFile() {
+    std::vector<int> referencesVector;
     int reference;
 
     std::cin >> reference;
     while (!std::cin.eof()) {
-        references_list.push_back(reference);
+        referencesVector.push_back(reference);
         std::cin >> reference;
     }
 
-    return references_list;
+    return referencesVector;
 }
