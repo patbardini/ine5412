@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
     fifo.calculatePageFaults(referencesVector);
 
     LRU lru = LRU(numberOfFrames);
+    lru.calculatePageFaults(referencesVector);
 
     OPT opt = OPT(numberOfFrames);
     opt.calculatePageFaults(referencesVector);
