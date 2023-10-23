@@ -23,7 +23,7 @@ void PageReplacementAlgorithm::setPageFaults(int pf) {
     pageFaults = pf;
 }
 
-void PageReplacementAlgorithm::simulatePageFaults(std::vector<int>& referencesVector) {
-    this->calculatePageFaults(referencesVector);
+void PageReplacementAlgorithm::simulatePageFaults(std::vector<int>& references) {
+    this->calculatePageFaults(references);
     this->printPageFaults();
 }

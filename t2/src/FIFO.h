@@ -6,12 +6,14 @@
 
 class FIFO : public PageReplacementAlgorithm {
 private:
-    std::queue<int> pagesQueue;
+    std::queue<int> pagesQueue;  // Fila com as páginas atualmente presentes na memória
 public:
+    // Construtor e destrutor
     FIFO(unsigned int n) : PageReplacementAlgorithm(n) {}
     ~FIFO() {}
     
     std::queue<int> getPages();
+
     void calculatePageFaults(std::vector<int>& references) override;
     void printPageFaults() override;
 };

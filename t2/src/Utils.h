@@ -6,6 +6,7 @@
 
 class Utils {
 public:
+    // Realiza a leitura do arquivo, armazenando seu conteúdo em um vetor
     static std::vector<int> readFile();
 };
 
