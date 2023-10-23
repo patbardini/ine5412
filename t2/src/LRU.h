@@ -7,11 +7,11 @@ class LRU : public PageReplacementAlgorithm {
 private:
     std::vector<int> pagesVector;
 public:
-    LRU(int n) : PageReplacementAlgorithm(n) {}
+    LRU(unsigned int n) : PageReplacementAlgorithm(n) {}
     ~LRU() {}
     
     std::vector<int> getPages();
-    void calculatePageFaults(std::vector<int> references) override;
+    void calculatePageFaults(std::vector<int>& references) override;
 };
 
 #endif // LRU_H

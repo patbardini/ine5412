@@ -5,12 +5,11 @@ std::vector<int> OPT::getPages() {
     return pagesVector;
 }
 
-void OPT::calculatePageFaults(std::vector<int> references) {
+void OPT::calculatePageFaults(std::vector<int>& references) {
     std::vector<int> nextReferences = references;
 
     for (int page : references) {
         nextReferences.erase(nextReferences.begin());
-
         if (std::find(pagesVector.begin(), pagesVector.end(), page) == pagesVector.end()) {
             if (pagesVector.size() >= getNumberOfFrames()) {
                 std::vector<int>::iterator toBeReplaced = predict(nextReferences);
@@ -22,7 +21,7 @@ void OPT::calculatePageFaults(std::vector<int> references) {
     }
 }
 
-std::vector<int>::iterator OPT::predict(std::vector<int> nextReferences) {
+std::vector<int>::iterator OPT::predict(std::vector<int>& nextReferences) {
     int pageToBeReplaced = pagesVector.front();
     size_t currentIndex = 0;
 

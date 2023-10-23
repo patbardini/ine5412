@@ -7,12 +7,12 @@ class OPT : public PageReplacementAlgorithm {
 private:
     std::vector<int> pagesVector;
 public:
-    OPT(int n) : PageReplacementAlgorithm(n) {}
+    OPT(unsigned int n) : PageReplacementAlgorithm(n) {}
     ~OPT() {}
     
     std::vector<int> getPages();
-    void calculatePageFaults(std::vector<int> references) override;
-    std::vector<int>::iterator predict(std::vector<int> nextReferences);
+    void calculatePageFaults(std::vector<int>& references) override;
+    std::vector<int>::iterator predict(std::vector<int>& nextReferences);
 };
 
 #endif // OPT_H

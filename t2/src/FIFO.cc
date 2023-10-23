@@ -5,7 +5,7 @@ std::queue<int> FIFO::getPages() {
     return pagesQueue;
 }
 
-void FIFO::calculatePageFaults(std::vector<int> references) {
+void FIFO::calculatePageFaults(std::vector<int>& references) {
     // para acessar as páginas atuais com maior facilidade
     std::unordered_set<int> currentPagesSet;
 
