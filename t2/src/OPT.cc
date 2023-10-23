@@ -1,5 +1,6 @@
 #include "OPT.h"
 #include <algorithm>
+#include <iostream>
 
 std::vector<int> OPT::getPages() {
     return pagesVector;
@@ -37,4 +38,8 @@ std::vector<int>::iterator OPT::predict(std::vector<int>& nextReferences) {
     }
     std::vector<int>::iterator pageToBeReplacedIter = std::find(pagesVector.begin(), pagesVector.end(), pageToBeReplaced);
     return pageToBeReplacedIter;
+}
+
+void OPT::printPageFaults() {
+    std::cout << "OPT: " << getPageFaults() << " PFs" << std::endl;
 }

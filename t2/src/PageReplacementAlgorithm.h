@@ -16,7 +16,9 @@ public:
     void setNumberOfFrames(unsigned int n);
     void setPageFaults(int pf);
 
+    void simulatePageFaults(std::vector<int>& referencesVector);
     virtual void calculatePageFaults(std::vector<int>& references) = 0;
+    virtual void printPageFaults() = 0;
 };
 
 #endif // PageReplacementAlgorithm_H

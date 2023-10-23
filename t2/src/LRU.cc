@@ -1,5 +1,6 @@
 #include "LRU.h"
 #include <algorithm>
+#include <iostream>
 
 std::vector<int> LRU::getPages() {
     return pagesVector;
@@ -20,4 +21,8 @@ void LRU::calculatePageFaults(std::vector<int>& references) {
             pagesVector.push_back(page);
         }
     }
+}
+
+void LRU::printPageFaults() {
+    std::cout << "LRU: " << getPageFaults() << " PFs" << std::endl;
 }

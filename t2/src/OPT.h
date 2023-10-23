@@ -13,6 +13,7 @@ public:
     std::vector<int> getPages();
     void calculatePageFaults(std::vector<int>& references) override;
     std::vector<int>::iterator predict(std::vector<int>& nextReferences);
+    void printPageFaults() override;
 };
 
 #endif // OPT_H

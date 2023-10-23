@@ -1,5 +1,6 @@
 #include "FIFO.h"
 #include <unordered_set>
+#include <iostream>
 
 std::queue<int> FIFO::getPages() {
     return pagesQueue;
@@ -20,4 +21,8 @@ void FIFO::calculatePageFaults(std::vector<int>& references) {
             }
         }
     }
+}
+
+void FIFO::printPageFaults() {
+    std::cout << "FIFO: " << getPageFaults() << " PFs" << std::endl;
 }

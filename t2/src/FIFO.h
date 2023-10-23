@@ -13,6 +13,7 @@ public:
     
     std::queue<int> getPages();
     void calculatePageFaults(std::vector<int>& references) override;
+    void printPageFaults() override;
 };
 
 #endif // FIFO_H
