@@ -22,3 +22,8 @@ void PageReplacementAlgorithm::setNumberOfFrames(unsigned int n) {
 void PageReplacementAlgorithm::setPageFaults(int pf) {
     pageFaults = pf;
 }
+
+void PageReplacementAlgorithm::simulatePageFaults(std::vector<int>& references) {
+    this->calculatePageFaults(references);
+    this->printPageFaults();
+}

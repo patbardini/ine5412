@@ -12,18 +12,17 @@ int main(int argc, char *argv[]) {
     int numberOfFrames = std::stoi(argv[1]);
     std::vector<int> referencesVector = Utils::readFile();
 
-    FIFO fifo = FIFO(numberOfFrames);
-    fifo.calculatePageFaults(referencesVector);
-
-    LRU lru = LRU(numberOfFrames);
-    lru.calculatePageFaults(referencesVector);
-
-    OPT opt = OPT(numberOfFrames);
-    opt.calculatePageFaults(referencesVector);
-
+    // Imprime os resultados referentes à quantidade de quadros e ao número de referências
     std::cout << numberOfFrames << " quadros" << std::endl;
     std::cout << referencesVector.size() << " refs" << std::endl;
-    std::cout << "FIFO: " << fifo.getPageFaults() << " PFs" << std::endl;
-    std::cout << "LRU: " << lru.getPageFaults() << " PFs" << std::endl;
-    std::cout << "OPT: " << opt.getPageFaults() << " PFs" << std::endl;
+
+    // Calcula e imprime os resultados para cada um dos algoritmos solicitados
+    FIFO fifo = FIFO(numberOfFrames);
+    fifo.simulatePageFaults(referencesVector);
+
+    LRU lru = LRU(numberOfFrames);
+    lru.simulatePageFaults(referencesVector);
+
+    OPT opt = OPT(numberOfFrames);
+    opt.simulatePageFaults(referencesVector);
 }

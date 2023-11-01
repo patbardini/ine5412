@@ -5,13 +5,16 @@
 
 class LRU : public PageReplacementAlgorithm {
 private:
-    std::vector<int> pagesVector;
+    std::vector<int> pagesVector;  // Vetor com as páginas atualmente presentes na memória
 public:
-    LRU(int n) : PageReplacementAlgorithm(n) {}
+    // Construtor e destrutor
+    LRU(unsigned int n) : PageReplacementAlgorithm(n) {}
     ~LRU() {}
     
     std::vector<int> getPages();
-    void calculatePageFaults(std::vector<int> references) override;
+
+    void calculatePageFaults(std::vector<int>& references) override;
+    void printPageFaults() override;
 };
 
 #endif // LRU_H
