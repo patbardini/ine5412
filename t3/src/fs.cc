@@ -11,11 +11,11 @@ int INE5412_FS::fs_format()
 
 	// libera a tabela de inodos
 	for (int i = 0; i < block.super.ninodeblocks; i++) {
-        for (int j = 0; j < INODES_PER_BLOCK; j++) {
-            block.inode[j].isvalid = 0;
-        }
-        disk->write(i + 1, block.data);
-    }
+		for (int j = 0; j < INODES_PER_BLOCK; j++) {
+			block.inode[j].isvalid = 0;
+		}
+		disk->write(i + 1, block.data);
+	}
 
 	int nblocks = disk->size();
 	int ninodeblocks = ceil(nblocks * 0.1);	// reserva dez por cento dos blocos para inodos
@@ -88,7 +88,52 @@ void INE5412_FS::fs_debug()
 
 int INE5412_FS::fs_mount()
 {
-	return 0;
+	// lê superbloco para verificar se há um sistema de arquivos
+	union fs_block block;
+
+	disk->read(0, block.data);
+
+	if (block.super.magic != FS_MAGIC) return 0;
+
+	// constrói bitmap
+	bitmap.resize(block.super.nblocks);
+	std::fill(bitmap.begin(), bitmap.end(), 0);
+
+	// superbloco
+	bitmap[0] = 1;
+	// verifica todos os inodes válidos
+	union fs_block inode_block;
+
+	for (int i = 0; i < block.super.ninodeblocks; i++) {
+		disk->read(i + 1, inode_block.data);
+
+		for (int j = 0; j < INODES_PER_BLOCK; j++) {
+
+			fs_inode inode = inode_block.inode[j];
+
+			if (inode.isvalid) {
+				bitmap[i + 1] = 1;
+
+				for (int direct_block : inode.direct) {
+					if (direct_block) bitmap[direct_block] = 1;
+				}
+
+				if (inode.indirect) {
+					bitmap[inode.indirect] = 1;
+
+					union fs_block indirect_block;
+					disk->read(inode.indirect, indirect_block.data);
+
+					for (int indirect_data_blocks : indirect_block.pointers) {
+						if (indirect_data_blocks) bitmap[indirect_data_blocks] = 1;
+					}
+				}
+			}
+		}
+	}
+
+	is_mounted = true;
+	return 1;
 }
 
 int INE5412_FS::fs_create()
