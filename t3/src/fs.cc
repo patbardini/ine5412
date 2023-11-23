@@ -138,6 +138,42 @@ int INE5412_FS::fs_mount()
 
 int INE5412_FS::fs_create()
 {
+	// verifica se já foi montado
+	if (!is_mounted) return 0;
+
+	// verifica se há espaço nos blocos de inodo
+	union fs_block block;
+	disk->read(0, block.data);
+
+	union fs_block inode_block;
+
+	for (int i = 0; i < block.super.ninodeblocks; i++) {
+		disk->read(i + 1, inode_block.data);
+
+		for (int j = 1; j < INODES_PER_BLOCK + 1; j++) {
+
+			fs_inode inode = inode_block.inode[j];
+
+			if (!inode.isvalid) {
+				int inumber = i * INODES_PER_BLOCK + j;
+				
+				inode.isvalid = 1;
+				inode.size = 0;
+				inode.indirect = 0;
+				for (int &direct_block : inode.direct) {
+					direct_block = 0;
+				}
+
+				inode_block.inode[j] = inode;
+
+				// escreve no disco
+				disk->write(i + 1, inode_block.data);
+
+				return inumber;
+			}
+		}
+	}
+	
 	return 0;
 }
 
