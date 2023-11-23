@@ -1,8 +1,34 @@
 #include "fs.h"
+#include <math.h>
 
 int INE5412_FS::fs_format()
 {
-	return 0;
+	// verifica se já foi montado
+	if (is_mounted) return 0;
+
+	union fs_block block;
+	disk->read(0, block.data);
+
+	// libera a tabela de inodos
+	for (int i = 0; i < block.super.ninodeblocks; i++) {
+        for (int j = 0; j < INODES_PER_BLOCK; j++) {
+            block.inode[j].isvalid = 0;
+        }
+        disk->write(i + 1, block.data);
+    }
+
+	int nblocks = disk->size();
+	int ninodeblocks = ceil(nblocks * 0.1);	// reserva dez por cento dos blocos para inodos
+
+	// escreve o superbloco
+	block.super.magic = FS_MAGIC;
+	block.super.nblocks = nblocks;
+	block.super.ninodeblocks = ninodeblocks;
+	block.super.ninodes = ninodeblocks * INODES_PER_BLOCK;
+
+	disk->write(0, block.data);
+
+	return 1;
 }
 
 void INE5412_FS::fs_debug()

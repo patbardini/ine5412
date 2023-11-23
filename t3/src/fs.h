@@ -54,6 +54,7 @@ public:
 
 private:
     Disk *disk;
+    bool is_mounted = false;
 };
 
 #endif
