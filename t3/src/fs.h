@@ -57,6 +57,9 @@ private:
     Disk *disk;
     bool is_mounted = false;
     std::vector<int> bitmap;
+
+    void inode_load(int inumber, class fs_inode *inode);
+    void inode_save(int inumber, class fs_inode *inode);
 };
 
 #endif

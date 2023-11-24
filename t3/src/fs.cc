@@ -177,9 +177,49 @@ int INE5412_FS::fs_create()
 	return 0;
 }
 
+// Deleta o inodo indicado pelo inúmero. Libera todo o dado e blocos indiretos atribuı́dos a este
+// inodo e os retorna ao mapa de blocos livres. Em caso de sucesso, retorna um. Em caso de falha, retorna 0.
 int INE5412_FS::fs_delete(int inumber)
 {
-	return 0;
+	union fs_block block;
+
+	disk->read(0, block.data);
+
+	// verifica se já foi montado e se o inumber é valido
+	if (!is_mounted || inumber < 1 || inumber > block.super.ninodes) return 0;
+	
+	// libera o inodo
+	union fs_block inode_block;
+
+	// calcula index do inodo
+	int inode_block_index = (inumber - 1) / INODES_PER_BLOCK + 1;
+	int inode_index = inumber % INODES_PER_BLOCK;
+
+	// lê bloco que contém o inodo
+	disk->read(inode_block_index, inode_block.data);
+
+	// acessa o inodo
+	fs_inode inode = inode_block.inode[inode_index];
+
+	// se o inodo for inválido, retorna erro
+	if (!inode.isvalid) return 0;
+
+	// TODO
+	// liberar os blocos diretos e indiretos no bitmap
+
+	inode.isvalid = 0;
+	inode.size = 0;
+	inode.indirect = 0;
+	for (int &direct_block : inode.direct) {
+		direct_block = 0;
+	}
+
+	inode_block.inode[inode_index] = inode;
+
+	// escreve no disco
+	disk->write(inode_block_index, inode_block.data);
+	
+	return 1;
 }
 
 int INE5412_FS::fs_getsize(int inumber)
@@ -195,4 +235,14 @@ int INE5412_FS::fs_read(int inumber, char *data, int length, int offset)
 int INE5412_FS::fs_write(int inumber, const char *data, int length, int offset)
 {
 	return 0;
+}
+
+void INE5412_FS::inode_load(int inumber, class fs_inode *inode) 
+{
+	// TODO
+}
+
+void INE5412_FS::inode_save(int inumber, class fs_inode *inode) 
+{
+	// TODO
 }
