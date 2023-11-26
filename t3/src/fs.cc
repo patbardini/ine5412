@@ -217,6 +217,16 @@ int INE5412_FS::fs_delete(int inumber)
 
 int INE5412_FS::fs_getsize(int inumber)
 {
+	if (!is_mounted) {
+		cout << "ERROR: disk is not mounted\n";
+		return -1;
+	}
+
+	fs_inode inode;
+	if (this->inode_load(inumber, &inode) && inode.isvalid) {
+		return inode.size;
+	}
+
 	return -1;
 }
 
