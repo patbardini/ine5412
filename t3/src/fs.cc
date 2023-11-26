@@ -237,12 +237,58 @@ int INE5412_FS::fs_write(int inumber, const char *data, int length, int offset)
 	return 0;
 }
 
-void INE5412_FS::inode_load(int inumber, class fs_inode *inode) 
+int INE5412_FS::inode_load(int inumber, class fs_inode *inode) 
 {
-	// TODO
+	union fs_block block;
+
+    disk->read(0, block.data);
+
+	if (1 > inumber || inumber > block.super.ninodes) {
+		cout << "ERROR: invalid inumber" << "\n";
+		return 0;
+	}
+
+	union fs_block inode_block;
+
+	for (int i = 0; i < block.super.ninodeblocks; i++) {
+		// lê bloco que contém o inodo
+		disk->read(i + 1, inode_block.data);
+
+		for (int j = 0; j < INODES_PER_BLOCK; j++) {
+			if ((i * INODES_PER_BLOCK + j) == inumber) {
+				*inode = inode_block.inode[j];
+			}
+
+		}
+	}
+	return 1;
 }
 
-void INE5412_FS::inode_save(int inumber, class fs_inode *inode) 
+int INE5412_FS::inode_save(int inumber, class fs_inode *inode) 
 {
-	// TODO
+	union fs_block block;
+
+    disk->read(0, block.data);
+
+	if (1 > inumber || inumber > block.super.ninodes) {
+		cout << "ERROR: invalid inumber" << "\n";
+		return 0;
+	}
+
+	union fs_block inode_block;
+
+	for (int i = 0; i < block.super.ninodeblocks; i++) {
+		// lê bloco que contém o inodo
+		disk->read(i + 1, inode_block.data);
+
+		for (int j = 0; j < INODES_PER_BLOCK; j++) {
+			if ((i * INODES_PER_BLOCK + j) == inumber) {
+				inode_block.inode[j] = *inode;
+                break;
+			}
+		}
+		// escreve no disco
+		disk->write(i + 1, inode_block.data);
+	}
+	return 1;
 }
