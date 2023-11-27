@@ -5,8 +5,12 @@
 
 int INE5412_FS::fs_format()
 {
-	// verifica se já foi montado
-	if (is_mounted) return 0;
+	// verifica se disco está montado
+	// uma tentativa de formatar um disco que já foi montado não deve fazer nada e retornar falha
+	if (is_mounted) {
+		cout << "ERROR: disk is mounted\n";
+		return 0;
+	}
 
 	union fs_block block;
 	disk->read(0, block.data);
@@ -35,6 +39,12 @@ int INE5412_FS::fs_format()
 
 void INE5412_FS::fs_debug()
 {
+	// verifica se está montado
+	if (!is_mounted) {
+		cout << "ERROR: disk is not mounted\n";
+		return;
+	}
+
 	union fs_block block;
 
 	disk->read(0, block.data);
@@ -47,11 +57,11 @@ void INE5412_FS::fs_debug()
 
 	union fs_block inode_block;
 
-	// percorre cada bloco de inode
+	// percorre cada bloco de inodo
 	for (int i = 0; i < block.super.ninodeblocks; i++) {
 		disk->read(i + 1, inode_block.data);
 
-		// percorre cada inode contido no bloco de inode
+		// percorre cada inodo contido no bloco de inodo
 		for (int j = 0; j < INODES_PER_BLOCK; j++) {
 
 			fs_inode inode = inode_block.inode[j];
@@ -95,15 +105,18 @@ int INE5412_FS::fs_mount()
 
 	disk->read(0, block.data);
 
-	if (block.super.magic != FS_MAGIC) return 0;
+	if (block.super.magic != FS_MAGIC) {
+		cout << "ERROR: file system invalid\n";
+		return 0;
+	}
 
 	// constrói bitmap
 	bitmap.resize(block.super.nblocks);
 	std::fill(bitmap.begin(), bitmap.end(), 0);
 
-	// ocupa bloco do superbloco
+	// ocupa bloco do superbloco no bitmap
 	bitmap[0] = 1;
-	// verifica todos os inodes válidos
+
 	union fs_block inode_block;
 
 	for (int i = 0; i < block.super.ninodeblocks; i++) {
@@ -116,6 +129,7 @@ int INE5412_FS::fs_mount()
 
 			fs_inode &inode = inode_block.inode[j];
 
+			// verifica os blocos ocupados por inodos válidos
 			if (inode.isvalid) {
 				for (int direct_block : inode.direct) {
 					if (direct_block) bitmap[direct_block] = 1;
@@ -141,25 +155,30 @@ int INE5412_FS::fs_mount()
 
 int INE5412_FS::fs_create()
 {
-	// verifica se já foi montado
-	if (!is_mounted) return 0;
+	// verifica se está montado
+	if (!is_mounted) {
+		cout << "ERROR: disk is not mounted\n";
+		return 0;
+	}
 
-	// verifica se há espaço nos blocos de inodo
 	union fs_block block;
 	disk->read(0, block.data);
 
 	union fs_block inode_block;
 
+	// verifica se há espaço nos blocos de inodo
 	for (int i = 0; i < block.super.ninodeblocks; i++) {
 		disk->read(i + 1, inode_block.data);
 
 		for (int j = 1; j < INODES_PER_BLOCK + 1; j++) {
 
 			fs_inode &inode = inode_block.inode[j];
-
+			
 			if (!inode.isvalid) {
+				// calcula o inúmero
 				int inumber = i * INODES_PER_BLOCK + j;
 				
+				// conteúdo do inodo vazio
 				inode.isvalid = 1;
 				inode.size = 0;
 				inode.indirect = 0;
@@ -167,13 +186,15 @@ int INE5412_FS::fs_create()
 					direct_block = 0;
 				}
 
+				// salva o inodo
 				this->inode_save(inumber, &inode);
 
 				return inumber;
 			}
 		}
 	}
-	
+
+	// se não houver espaço nos blocos de inodo, retorna 0
 	return 0;
 }
 
@@ -188,11 +209,13 @@ int INE5412_FS::fs_delete(int inumber)
 	fs_inode inode;
 	if (this->inode_load(inumber, &inode) && inode.isvalid) {
 
+		// libera os blocos diretos, desmarcando-os do bitmap também
 		for (int &direct_block : inode.direct) {
 			direct_block = 0;
 			bitmap[direct_block] = 0;
 		}
 
+		// caso necessário, libera os blocos indiretos, desmarcando-os do bitmap também
 		if (inode.indirect) {
 			union fs_block indirect_block;
 			disk->read(inode.indirect, indirect_block.data);
@@ -205,9 +228,11 @@ int INE5412_FS::fs_delete(int inumber)
 			bitmap[inode.indirect] = 0;
 		}
 
+		// atualiza o tamanho e a validade do inodo
 		inode.isvalid = 0;
 		inode.size = 0;
 
+		// salva o inodo
 		this->inode_save(inumber, &inode);
 
 		return 1;
@@ -217,11 +242,13 @@ int INE5412_FS::fs_delete(int inumber)
 
 int INE5412_FS::fs_getsize(int inumber)
 {
+	// verifica se está montado
 	if (!is_mounted) {
 		cout << "ERROR: disk is not mounted\n";
 		return -1;
 	}
 
+	// carrega o inodo e retorna seu tamanho
 	fs_inode inode;
 	if (this->inode_load(inumber, &inode) && inode.isvalid) {
 		return inode.size;
@@ -232,7 +259,7 @@ int INE5412_FS::fs_getsize(int inumber)
 
 int INE5412_FS::fs_read(int inumber, char *data, int length, int offset)
 {
-	// verifica se disco está montado
+	// verifica se o disco está montado
 	if (!is_mounted) {
 		cout << "ERROR: disk is not mounted\n";
 		return 0;
@@ -282,7 +309,7 @@ int INE5412_FS::fs_read(int inumber, char *data, int length, int offset)
 
 int INE5412_FS::fs_write(int inumber, const char *data, int length, int offset)
 {
-	// verifica se disco está montado
+	// verifica se o disco está montado
 	if (!is_mounted) {
 		cout << "ERROR: disk is not mounted\n";
 		return 0;
@@ -292,6 +319,7 @@ int INE5412_FS::fs_write(int inumber, const char *data, int length, int offset)
 	fs_inode inode;
 	union fs_block indirect_block;
     
+	// carrega o inodo correspondente ao inumber e verifica se ele é válido
     if (this->inode_load(inumber, &inode) && inode.isvalid) {
 		
 		int bytes_written = 0;
@@ -337,6 +365,8 @@ int INE5412_FS::fs_write(int inumber, const char *data, int length, int offset)
 				blocknum_to_read_from_disk = indirect_block.pointers[indirect_index];
 			}
 
+			// faz a escrita do bloco modificado no disco
+
 			disk->read(blocknum_to_read_from_disk, block.data);
 
 			int bytes_to_copy = std::min(remaining_length, Disk::DISK_BLOCK_SIZE - block_index);
@@ -363,9 +393,9 @@ int INE5412_FS::fs_write(int inumber, const char *data, int length, int offset)
 int INE5412_FS::inode_load(int inumber, class fs_inode *inode) 
 {
 	union fs_block block;
-
 	disk->read(0, block.data);
 
+	// verifica se o inúmero passado é valido
 	if (1 > inumber || inumber > block.super.ninodes) {
 		cout << "ERROR: invalid inumber\n";
 		return 0;
@@ -378,20 +408,22 @@ int INE5412_FS::inode_load(int inumber, class fs_inode *inode)
 		disk->read(i + 1, inode_block.data);
 
 		for (int j = 0; j < INODES_PER_BLOCK; j++) {
+			// verifica se é o inodo correspondente ao inúmero informado e o carrega
 			if ((i * INODES_PER_BLOCK + j) == inumber) {
 				*inode = inode_block.inode[j];
 			}
 		}
 	}
+	// retorna 1 em caso de sucesso
 	return 1;
 }
 
 int INE5412_FS::inode_save(int inumber, class fs_inode *inode) 
 {
 	union fs_block block;
-
 	disk->read(0, block.data);
 
+	// verifica se o inúmero passado é valido
 	if (1 > inumber || inumber > block.super.ninodes) {
 		cout << "ERROR: invalid inumber\n";
 		return 0;
@@ -404,6 +436,7 @@ int INE5412_FS::inode_save(int inumber, class fs_inode *inode)
 		disk->read(i + 1, inode_block.data);
 
 		for (int j = 0; j < INODES_PER_BLOCK; j++) {
+			// verifica se é o inodo correspondente ao inúmero informado e o salva
 			if ((i * INODES_PER_BLOCK + j) == inumber) {
 				inode_block.inode[j] = *inode;
 				break;
@@ -421,7 +454,9 @@ int INE5412_FS::find_free_block() {
 
 	disk->read(0, block.data);
 
+	// percorre todos os blocos
 	for (int i = 0; i < block.super.nblocks; i++) {
+		// se não estiver marcado no bitmap
 		if (!bitmap[i]) {
 			bitmap[i] = 1;  // marca o bloco como ocupado
 			return i;
