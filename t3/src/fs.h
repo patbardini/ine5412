@@ -60,6 +60,7 @@ private:
 
     int inode_load(int inumber, class fs_inode *inode);
     int inode_save(int inumber, class fs_inode *inode);
+    int find_free_block();
 };
 
 #endif

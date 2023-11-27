@@ -1,5 +1,7 @@
 #include "fs.h"
 #include <math.h>
+#include <cstring> 
+#include <algorithm>
 
 int INE5412_FS::fs_format()
 {
@@ -99,21 +101,22 @@ int INE5412_FS::fs_mount()
 	bitmap.resize(block.super.nblocks);
 	std::fill(bitmap.begin(), bitmap.end(), 0);
 
-	// superbloco
+	// ocupa bloco do superbloco
 	bitmap[0] = 1;
 	// verifica todos os inodes válidos
 	union fs_block inode_block;
 
 	for (int i = 0; i < block.super.ninodeblocks; i++) {
+		// ocupa blocos dos inodos
+		bitmap[i + 1] = 1;
+
 		disk->read(i + 1, inode_block.data);
 
 		for (int j = 0; j < INODES_PER_BLOCK; j++) {
 
-			fs_inode inode = inode_block.inode[j];
+			fs_inode &inode = inode_block.inode[j];
 
 			if (inode.isvalid) {
-				bitmap[i + 1] = 1;
-
 				for (int direct_block : inode.direct) {
 					if (direct_block) bitmap[direct_block] = 1;
 				}
@@ -152,7 +155,7 @@ int INE5412_FS::fs_create()
 
 		for (int j = 1; j < INODES_PER_BLOCK + 1; j++) {
 
-			fs_inode inode = inode_block.inode[j];
+			fs_inode &inode = inode_block.inode[j];
 
 			if (!inode.isvalid) {
 				int inumber = i * INODES_PER_BLOCK + j;
@@ -164,10 +167,7 @@ int INE5412_FS::fs_create()
 					direct_block = 0;
 				}
 
-				inode_block.inode[j] = inode;
-
-				// escreve no disco
-				disk->write(i + 1, inode_block.data);
+				this->inode_save(inumber, &inode);
 
 				return inumber;
 			}
@@ -232,11 +232,131 @@ int INE5412_FS::fs_getsize(int inumber)
 
 int INE5412_FS::fs_read(int inumber, char *data, int length, int offset)
 {
+	// verifica se disco está montado
+	if (!is_mounted) {
+		cout << "ERROR: disk is not mounted\n";
+		return 0;
+	}
+
+	// carrega o inodo correspondente ao inumber e verifica se ele é válido
+	fs_inode inode;
+	if (this->inode_load(inumber, &inode) && inode.isvalid) {
+
+		int bytes_read = 0;
+		int remaining_length = length;
+
+		int block_num;
+		union fs_block block;
+
+		// lê os dados do inodo, começando do offset até o comprimento especificado
+		while (remaining_length > 0 && offset < inode.size) {
+			block_num = offset / Disk::DISK_BLOCK_SIZE;
+
+			if (block_num < POINTERS_PER_INODE) {
+				// lê dos blocos diretos
+				disk->read(inode.direct[block_num], block.data);
+			} else {
+				// lê dos blocos indiretos
+				int indirect_index = block_num - POINTERS_PER_INODE;
+				union fs_block indirect_block;
+				disk->read(inode.indirect, indirect_block.data);
+				disk->read(indirect_block.pointers[indirect_index], block.data);
+			}
+
+			int block_num = offset % Disk::DISK_BLOCK_SIZE;
+			int bytes_to_copy = std::min(Disk::DISK_BLOCK_SIZE - block_num, remaining_length);
+			bytes_to_copy = std::min(bytes_to_copy, inode.size - offset);
+
+			memcpy(data + bytes_read, block.data + block_num, bytes_to_copy);
+
+			bytes_read += bytes_to_copy;
+			remaining_length -= bytes_to_copy;
+			offset += bytes_to_copy;
+		}
+		// retorna o número total de bytes lidos
+		return bytes_read;
+	}
+
 	return 0;
 }
 
 int INE5412_FS::fs_write(int inumber, const char *data, int length, int offset)
 {
+	// verifica se disco está montado
+	if (!is_mounted) {
+		cout << "ERROR: disk is not mounted\n";
+		return 0;
+	}
+
+	union fs_block block;
+	fs_inode inode;
+	union fs_block indirect_block;
+    
+    if (this->inode_load(inumber, &inode) && inode.isvalid) {
+		
+		int bytes_written = 0;
+		int remaining_length = length;
+		int blocknum_to_read_from_disk;
+
+        while (remaining_length > 0) {
+
+			int block_num = offset / Disk::DISK_BLOCK_SIZE;
+        	int block_index = offset % Disk::DISK_BLOCK_SIZE;
+
+            if (block_num < POINTERS_PER_INODE) {
+				// se ainda tiver blocos diretos livres, escreve nestes
+                if (!inode.direct[block_num]) {
+                    int new_block = this->find_free_block();
+                    if (new_block == -1) break;
+
+                    inode.direct[block_num] = new_block;
+                }
+				blocknum_to_read_from_disk = inode.direct[block_num];
+
+            } else {
+                // se não, escreve nos blocos indiretos
+                if (!inode.indirect) {
+                    int new_block = this->find_free_block();
+                    if (new_block == -1) break;
+
+                    inode.indirect = new_block;
+                }
+
+                disk->read(inode.indirect, indirect_block.data);
+
+                int indirect_index = block_num - POINTERS_PER_INODE;
+
+                if (!indirect_block.pointers[indirect_index]) {
+                    int new_block = this->find_free_block();
+                    if (new_block == -1) break;
+
+                    indirect_block.pointers[indirect_index] = new_block;
+
+                    disk->write(inode.indirect, indirect_block.data);
+                }
+				blocknum_to_read_from_disk = indirect_block.pointers[indirect_index];
+			}
+
+			disk->read(blocknum_to_read_from_disk, block.data);
+
+			int bytes_to_copy = std::min(remaining_length, Disk::DISK_BLOCK_SIZE - block_index);
+			memcpy(block.data + block_index, data + bytes_written, bytes_to_copy);
+
+			disk->write(block_num < POINTERS_PER_INODE ? inode.direct[block_num] : indirect_block.pointers[block_num - POINTERS_PER_INODE], block.data);
+
+			bytes_written += bytes_to_copy;
+			remaining_length -= bytes_to_copy;
+			offset += bytes_to_copy;
+		}
+
+		// atualiza o tamanho do inodo, caso necessário
+		if (inode.size < offset) {
+			inode.size = offset;
+			this->inode_save(inumber, &inode);
+		}
+
+		return bytes_written;
+    }
 	return 0;
 }
 
@@ -293,4 +413,19 @@ int INE5412_FS::inode_save(int inumber, class fs_inode *inode)
 		disk->write(i + 1, inode_block.data);
 	}
 	return 1;
+}
+
+// função auxiliar para encontrar um bloco livre
+int INE5412_FS::find_free_block() {
+	union fs_block block;
+
+	disk->read(0, block.data);
+
+	for (int i = 0; i < block.super.nblocks; i++) {
+		if (!bitmap[i]) {
+			bitmap[i] = 1;  // marca o bloco como ocupado
+			return i;
+		}
+	}
+    return -1;  // retorna -1 caso nenhum bloco livre seja encontrado
 }
